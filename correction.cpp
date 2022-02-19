@@ -79,7 +79,85 @@ void setup()
   Serial.println("Ultrasonic Sensor HC-SR04 Test, translation"); // print some text in Serial Monitor
 }
 
-// ------------Functions------------------
+
+
+// ------------Function declaration--------------------------------
+
+void clear_pin(int x);                            // Set digital pin low
+
+int ultraSensor(int trig, int echo);              // Perform measurements with the ultrasonic sensor
+
+int real_distance(float distance, float angle);   // Convert the distance recieved from sensor into orthogonal distance based on angle (trigonometry)
+
+void translate_right();                           // vehicle translates to the right
+
+void translate_left();                            // Vehicle translates to the left
+
+void translate_stop();                            // Set all pwm signals to 0, stop all motors
+
+void rotate_stop();                               // Currently same as translate_stop ^
+
+void translate_FWD();                             // Vehicle drives forwards
+
+void translate_BWD();                             // Vehicle drives backwards
+
+void rotate_centered_clkw();                      // Rotates vehicle clockwise from the center axis
+
+void rotate_centered_cclkw();                     // Rotates vehicle counterclockwise from the center axis
+
+
+//-----------Main loop-------------------------------------
+void loop()
+{
+  // Calculates the orthogonal distance from the wall to the sensor based on the snesor angle
+  real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
+  real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
+  real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
+  real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
+
+
+  // Rotational correction. ensures vehicle is parallel to the walls
+  if ((real_distance_BL < (real_distance_FL - tolerance_angle)) ||
+           (real_distance_FR < (real_distance_BR - tolerance_angle)))
+  {
+    rotate_centered_cclkw();
+    orth = false;
+  }
+
+  else if ((real_distance_FL < (real_distance_BL - tolerance_angle) ||
+            (real_distance_FR > (real_distance_BR + tolerance_angle))))
+  {
+    rotate_centered_clkw();
+    orth = false;
+  }
+
+  else if (!orth) {
+    orth = true;
+    rotate_stop();
+  }
+
+
+  // Trnslational correction. Vehicle will attempt to center itself between two obstacles, after it has been rotated to parallel
+  if (orth && ((real_distance_FL >= (real_distance_FR - tolerance)) &&
+               (real_distance_FL <= (real_distance_FR + tolerance))))
+  {
+    translate_stop();
+  }
+  else if (orth && ((real_distance_FL < (real_distance_FR - tolerance)) || 
+                    (real_distance_BL < (real_distance_BR - tolerance))))
+  {
+    translate_right();
+  }
+  else if (orth && ((real_distance_FL > (real_distance_FR + tolerance)) || 
+                    (real_distance_BL > (real_distance_BR + tolerance))))
+  {
+    translate_left();
+  }
+}
+
+
+// ------------------------------- function ---------------------
+
 void clear_pin(int x)
 {
   digitalWrite(x, LOW);
@@ -236,49 +314,4 @@ void rotate_centered_cclkw()
 
   analogWrite(FWDpin_BR, (0 * multiplier_BR * multiplier_rotation));
   analogWrite(BWDpin_BR, (PWM * multiplier_BR * multiplier_rotation));
-}
-
-//-----------Main loop------------------
-void loop()
-{
-
-  real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
-  real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
-  real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
-  real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
-
-  if ((real_distance_BL < (real_distance_FL - tolerance_angle)) ||
-           (real_distance_FR < (real_distance_BR - tolerance_angle)))
-  {
-    rotate_centered_cclkw();
-    orth = false;
-  }
-
-  else if ((real_distance_FL < (real_distance_BL - tolerance_angle) ||
-            (real_distance_FR > (real_distance_BR + tolerance_angle))))
-  {
-    rotate_centered_clkw();
-    orth = false;
-  }
-
-  else if (!orth) {
-    orth = true;
-    rotate_stop();
-  }
-
-  if (orth && ((real_distance_FL >= (real_distance_FR - tolerance)) &&
-               (real_distance_FL <= (real_distance_FR + tolerance))))
-  {
-    translate_stop();
-  }
-  else if (orth && ((real_distance_FL < (real_distance_FR - tolerance)) || 
-                    (real_distance_BL < (real_distance_BR - tolerance))))
-  {
-    translate_right();
-  }
-  else if (orth && ((real_distance_FL > (real_distance_FR + tolerance)) || 
-                    (real_distance_BL > (real_distance_BR + tolerance))))
-  {
-    translate_left();
-  }
 }
