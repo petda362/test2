@@ -1,40 +1,44 @@
-// test 3
-// tttttt
-// test4
-// test 5
+// Projectgroup 1
+// Bachelors-project in Electronics Design engineering
+
+// Alexander Riex ED4
+// Henrik Nilsson ED3
+// Konrad Råström ED3
+// Petter Danev ED5
+
 //-------------Libraries---------------
 #include <Arduino.h>
 #include <math.h>
 
 //---------Defining pins----------------
-#define echopin_FL 50 // Forward Left sensor
+#define echopin_FL 50 // Forward Left ultrasonic sensor
 #define trigpin_FL 52
-#define echopin_FR 47 // Forward Right sensor
+#define echopin_FR 47 // Forward Right ultrasonic sensor
 #define trigpin_FR 49
-#define echopin_BL 51 // Back Left
+#define echopin_BL 51 // Back Left ultrasonic sensor
 #define trigpin_BL 53
-#define echopin_BR 46 // Back Right
+#define echopin_BR 46 // Back Right ultrasonic sensor
 #define trigpin_BR 48
 
 #define FWDpin_FL 9 // FWD Forward left
-#define BWDpin_FL 8 // BWD
+#define BWDpin_FL 8 // BWD -||-
 #define FWDpin_FR 7 // FWD Forward Right
-#define BWDpin_FR 6 // BWD
+#define BWDpin_FR 6 // BWD -||-
 #define FWDpin_BL 5 // FWD Backward Left
-#define BWDpin_BL 4 // BWD
+#define BWDpin_BL 4 // BWD -||-
 #define FWDpin_BR 3 // FWD Backward Right
-#define BWDpin_BR 2 // BWD
+#define BWDpin_BR 2 // BWD -||-
 
 //--------Changeable variables-----------
-int tolerance = 10;
-int tolerance_angle = 25; // one degree
-float angle = 18.33;
-int PWM = 100;
-float multiplier_FL = 0.90;
+int tolerance = 10;                 // Allowed error before the translation corection algorithm is implemented
+int tolerance_angle = 25;           // Allowed error before the rotational correction algoritm is implemented
+float angle = 18.33;                // Angle of the sensors from the vehicle
+int PWM = 100;                      // Base PWM before modifiers. from 0 to 255
+float multiplier_FL = 0.90;         // Multipliers for seperate wheels, for adjusting motor speed (PWM * multiplier)
 float multiplier_FR = 0.90;
 float multiplier_BL = 1.0;
 float multiplier_BR = 0.90;
-float multiplier_rotation = 0.8;
+float multiplier_rotation = 0.8;    // multiplier for rotation, for adjusting motor speed whilst rotating (PWM * multiplier)
 
 // --------Defining variables------------
 long travelTime_FL;
@@ -52,7 +56,7 @@ double real_distance_FR;
 double real_distance_BL;
 double real_distance_BR;
 
-bool orth = false;
+bool orth = false;          // bolean that describes if the vehicle is parallell to the walls
 
 //--------------Setup-------------------
 void setup()
@@ -123,14 +127,12 @@ void loop()
     rotate_centered_cclkw();
     orth = false;
   }
-
   else if ((real_distance_FL < (real_distance_BL - tolerance_angle) ||
             (real_distance_FR > (real_distance_BR + tolerance_angle))))
   {
     rotate_centered_clkw();
     orth = false;
   }
-
   else if (!orth) {
     orth = true;
     rotate_stop();
@@ -138,6 +140,7 @@ void loop()
 
 
   // Trnslational correction. Vehicle will attempt to center itself between two obstacles, after it has been rotated to parallel
+  // only runs if orthogonal = True
   if (orth && ((real_distance_FL >= (real_distance_FR - tolerance)) &&
                (real_distance_FL <= (real_distance_FR + tolerance))))
   {
@@ -156,7 +159,7 @@ void loop()
 }
 
 
-// ------------------------------- function ---------------------
+// ------------------------------- function ---------------------------
 
 void clear_pin(int x)
 {
