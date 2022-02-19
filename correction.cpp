@@ -109,6 +109,10 @@ void rotate_centered_clkw();                      // Rotates vehicle clockwise f
 
 void rotate_centered_cclkw();                     // Rotates vehicle counterclockwise from the center axis
 
+void rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance);
+
+void translational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance);
+
 
 //-----------Main loop-------------------------------------
 void loop()
@@ -118,44 +122,6 @@ void loop()
   real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
   real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
   real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
-
-
-  // Rotational correction. ensures vehicle is parallel to the walls
-  if ((real_distance_BL < (real_distance_FL - tolerance_angle)) ||
-           (real_distance_FR < (real_distance_BR - tolerance_angle)))
-  {
-    rotate_centered_cclkw();
-    orth = false;
-  }
-  else if ((real_distance_FL < (real_distance_BL - tolerance_angle) ||
-            (real_distance_FR > (real_distance_BR + tolerance_angle))))
-  {
-    rotate_centered_clkw();
-    orth = false;
-  }
-  else if (!orth) {
-    orth = true;
-    rotate_stop();
-  }
-
-
-  // Trnslational correction. Vehicle will attempt to center itself between two obstacles, after it has been rotated to parallel
-  // only runs if orthogonal = True
-  if (orth && ((real_distance_FL >= (real_distance_FR - tolerance)) &&
-               (real_distance_FL <= (real_distance_FR + tolerance))))
-  {
-    translate_stop();
-  }
-  else if (orth && ((real_distance_FL < (real_distance_FR - tolerance)) || 
-                    (real_distance_BL < (real_distance_BR - tolerance))))
-  {
-    translate_right();
-  }
-  else if (orth && ((real_distance_FL > (real_distance_FR + tolerance)) || 
-                    (real_distance_BL > (real_distance_BR + tolerance))))
-  {
-    translate_left();
-  }
 }
 
 
@@ -317,4 +283,41 @@ void rotate_centered_cclkw()
 
   analogWrite(FWDpin_BR, (0 * multiplier_BR * multiplier_rotation));
   analogWrite(BWDpin_BR, (PWM * multiplier_BR * multiplier_rotation));
+}
+
+void rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance_angle) {
+    if ((dist_BL < (dist_FL - tolerance_angle)) ||
+           (dist_FR < (dist_BR - tolerance_angle)))
+  {
+    rotate_centered_cclkw();
+    orth = false;
+  }
+  else if ((dist_FL < (dist_BL - tolerance_angle) ||
+            (dist_FR > (dist_BR + tolerance_angle))))
+  {
+    rotate_centered_clkw();
+    orth = false;
+  }
+  else if (!orth) {
+    orth = true;
+    rotate_stop();
+  }
+}
+
+void translational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance) {
+    if (orth && ((dist_FL >= (dist_FR - tolerance)) &&
+               (dist_FL <= (dist_FR + tolerance))))
+  {
+    translate_stop();
+  }
+  else if (orth && ((dist_FL < (dist_FR - tolerance)) || 
+                    (dist_BL < (dist_BR - tolerance))))
+  {
+    translate_right();
+  }
+  else if (orth && ((dist_FL > (dist_FR + tolerance)) || 
+                    (dist_BL > (dist_BR + tolerance))))
+  {
+    translate_left();
+  }
 }
