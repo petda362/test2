@@ -122,6 +122,10 @@ void loop()
   real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
   real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
   real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
+
+  rotational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance_angle);
+
+  translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance);
 }
 
 
