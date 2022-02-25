@@ -10,6 +10,8 @@
 #include <Arduino.h>
 #include <math.h>
 #include "correction.h"
+#include "bluetooth.h"
+#include "SoftwareSerial.h"
 
 //---------Defining pins----------------
 #define echopin_FL 50 // Forward Left ultrasonic sensor
@@ -51,6 +53,8 @@ double real_distance_FR;
 double real_distance_BL;
 double real_distance_BR;
 
+String OS_signal; // ÖS_Signal
+
 
 
 // -------------------------Setup-------------------
@@ -82,12 +86,14 @@ void setup()
 void loop()
 {
   // Calculates the orthogonal distance from the wall to the sensor based on the sensor angle
-  real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
-  real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
-  real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
-  real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
+  //real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
+  //real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
+  //real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
+  //real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
 
-  rotational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance_angle);
+  //rotational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance_angle);
 
-  translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance);
+  //translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance);
+
+  OS_signal = readBluetoothData();
 }
