@@ -81,7 +81,7 @@ void setup()
 //-----------Main loop-------------------------------------
 void loop()
 {
-  // Calculates the orthogonal distance from the wall to the sensor based on the snesor angle
+  // Calculates the orthogonal distance from the wall to the sensor based on the sensor angle
   real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
   real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
   real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
