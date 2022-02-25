@@ -1,5 +1,5 @@
 // Projectgroup 1
-// Bachelors-project in Electronics Design engineering
+// Bachelors-project in Electronics Design Engineering
 
 // Alexander Riex ED4
 // Henrik Nilsson ED3
