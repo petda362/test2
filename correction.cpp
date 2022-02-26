@@ -4,6 +4,7 @@
 
 //-------------Libraries---------------
 #include "correction.h"
+#include "movement.h"
 
 //---------Defining pins----------------
 #define echopin_FL 50 // Forward Left ultrasonic sensor
@@ -26,12 +27,7 @@
 
 
 // --------------------- changeable variables-----------------
-int PWM = 100;                      // Base PWM before modifiers. from 0 to 255
-float multiplier_FL = 0.90;         // Multipliers for seperate wheels, for adjusting motor speed (PWM * multiplier)
-float multiplier_FR = 0.90;
-float multiplier_BL = 1.0;
-float multiplier_BR = 0.90;
-float multiplier_rotation = 0.8;    // multiplier for rotation, for adjusting motor speed whilst rotating (PWM * multiplier)
+
 bool orth = false;          // bolean that describes if the vehicle is parallell to the walls
 
 
@@ -60,139 +56,6 @@ int real_distance(float distance, float angle)
 {
   double real_dist = distance * sin(DEG_TO_RAD * angle);
   return real_dist;
-}
-
-void translate_right()
-{
-  Serial.println("move right");
-
-  analogWrite(FWDpin_FL, (0 * multiplier_FL));
-  analogWrite(BWDpin_FL, (PWM * multiplier_FL));
-
-  analogWrite(FWDpin_FR, (PWM * multiplier_FR));
-  analogWrite(BWDpin_FR, (0 * multiplier_FR));
-
-  analogWrite(FWDpin_BL, (PWM * multiplier_BL));
-  analogWrite(BWDpin_BL, (0 * multiplier_BL));
-
-  analogWrite(FWDpin_BR, (0 * multiplier_BR));
-  analogWrite(BWDpin_BR, (PWM * multiplier_BR));
-}
-
-void translate_left()
-{
-
-  Serial.println("move left");
-
-  analogWrite(FWDpin_FL, (PWM * multiplier_FL));
-  analogWrite(BWDpin_FL, (0 * multiplier_FL));
-
-  analogWrite(FWDpin_FR, (0 * multiplier_FR));
-  analogWrite(BWDpin_FR, (PWM * multiplier_FR));
-
-  analogWrite(FWDpin_BL, (0 * multiplier_BL));
-  analogWrite(BWDpin_BL, (PWM * multiplier_BL));
-
-  analogWrite(FWDpin_BR, (PWM * multiplier_BR));
-  analogWrite(BWDpin_BR, (0 * multiplier_BR));
-}
-
-void translate_stop()
-{
-  Serial.println("Centered");
-
-  analogWrite(FWDpin_FL, 0);
-  analogWrite(BWDpin_FL, 0);
-
-  analogWrite(FWDpin_FR, 0);
-  analogWrite(BWDpin_FR, 0);
-
-  analogWrite(FWDpin_BL, 0);
-  analogWrite(BWDpin_BL, 0);
-
-  analogWrite(FWDpin_BR, 0);
-  analogWrite(BWDpin_BR, 0);
-}
-
-void rotate_stop()
-{
-  Serial.println("ortogonal");
-
-  analogWrite(FWDpin_FL, 0);
-  analogWrite(BWDpin_FL, 0);
-
-  analogWrite(FWDpin_FR, 0);
-  analogWrite(BWDpin_FR, 0);
-
-  analogWrite(FWDpin_BL, 0);
-  analogWrite(BWDpin_BL, 0);
-
-  analogWrite(FWDpin_BR, 0);
-  analogWrite(BWDpin_BR, 0);
-}
-
-void translate_FWD()
-{
-  Serial.println("Forward");
-  analogWrite(FWDpin_FL, (0 * multiplier_FL));
-  analogWrite(BWDpin_FL, (PWM * multiplier_FL));
-
-  analogWrite(FWDpin_FR, (0 * multiplier_FR));
-  analogWrite(BWDpin_FR, (PWM * multiplier_FR));
-
-  analogWrite(FWDpin_BL, (0 * multiplier_BL));
-  analogWrite(BWDpin_BL, (PWM * multiplier_BL));
-
-  analogWrite(FWDpin_BR, (0 * multiplier_BR));
-  analogWrite(BWDpin_BR, (PWM * multiplier_BR));
-}
-
-void translate_BWD()
-{
-  Serial.println("Backward");
-  analogWrite(FWDpin_FL, (PWM * multiplier_FL));
-  analogWrite(BWDpin_FL, (0 * multiplier_FL));
-
-  analogWrite(FWDpin_FR, (PWM * multiplier_FR));
-  analogWrite(BWDpin_FR, (0 * multiplier_FR));
-
-  analogWrite(FWDpin_BL, (PWM * multiplier_BL));
-  analogWrite(BWDpin_BL, (0 * multiplier_BL));
-
-  analogWrite(FWDpin_BR, (PWM * multiplier_BR));
-  analogWrite(BWDpin_BR, (0 * multiplier_BR));
-}
-
-void rotate_centered_clkw()
-{
-  Serial.println("rotate clockwise");
-  analogWrite(FWDpin_FL, (0 * multiplier_FL * multiplier_rotation));
-  analogWrite(BWDpin_FL, (PWM * multiplier_FL * multiplier_rotation));
-
-  analogWrite(FWDpin_FR, (PWM * multiplier_FR * multiplier_rotation));
-  analogWrite(BWDpin_FR, (0 * multiplier_FR * multiplier_rotation));
-
-  analogWrite(FWDpin_BL, (0 * multiplier_BL * multiplier_rotation));
-  analogWrite(BWDpin_BL, (PWM * multiplier_BL * multiplier_rotation));
-
-  analogWrite(FWDpin_BR, (PWM * multiplier_BR * multiplier_rotation));
-  analogWrite(BWDpin_BR, (0 * multiplier_BR * multiplier_rotation));
-}
-
-void rotate_centered_cclkw()
-{
-  Serial.println("rotate counter-clockwise");
-  analogWrite(FWDpin_FL, (PWM * multiplier_FL * multiplier_rotation));
-  analogWrite(BWDpin_FL, (0 * multiplier_FL * multiplier_rotation));
-
-  analogWrite(FWDpin_FR, (0 * multiplier_FR * multiplier_rotation));
-  analogWrite(BWDpin_FR, (PWM * multiplier_FR * multiplier_rotation));
-
-  analogWrite(FWDpin_BL, (PWM * multiplier_BL * multiplier_rotation));
-  analogWrite(BWDpin_BL, (0 * multiplier_BL * multiplier_rotation));
-
-  analogWrite(FWDpin_BR, (0 * multiplier_BR * multiplier_rotation));
-  analogWrite(BWDpin_BR, (PWM * multiplier_BR * multiplier_rotation));
 }
 
 void rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance_angle) {
