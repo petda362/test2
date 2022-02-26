@@ -7,23 +7,25 @@
 #include "movement.h"
 
 //---------Defining pins----------------
-#define echopin_FL 50 // Forward Left ultrasonic sensor
-#define trigpin_FL 52
-#define echopin_FR 47 // Forward Right ultrasonic sensor
-#define trigpin_FR 49
-#define echopin_BL 51 // Back Left ultrasonic sensor
-#define trigpin_BL 53
-#define echopin_BR 46 // Back Right ultrasonic sensor
-#define trigpin_BR 48
+#define echopin_FL 40 // Forward Left sensor
+#define trigpin_FL 41
+#define echopin_FR 42 // Forward Right sensor
+#define trigpin_FR 43
+#define echopin_BL 44 // Back Left
+#define trigpin_BL 45
+#define echopin_BR 46 // Back Right
+#define trigpin_BR 47
 
-#define FWDpin_FL 9 // FWD Forward left
-#define BWDpin_FL 8 // BWD -||-
-#define FWDpin_FR 7 // FWD Forward Right
-#define BWDpin_FR 6 // BWD -||-
-#define FWDpin_BL 5 // FWD Backward Left
-#define BWDpin_BL 4 // BWD -||-
-#define FWDpin_BR 3 // FWD Backward Right
-#define BWDpin_BR 2 // BWD -||-
+#define STATE 50      // STATE PIN HC05
+
+#define FWDpin_FL 8 // FWD Forward left
+#define BWDpin_FL 9 // BWD
+#define FWDpin_FR 4 // FWD Forward Right
+#define BWDpin_FR 5 // BWD
+#define FWDpin_BL 6 // FWD Backward LefB
+#define BWDpin_BL 7 // BWD
+#define FWDpin_BR 10 // FWD Backward Right
+#define BWDpin_BR 11 // BWD
 
 
 // --------------------- changeable variables-----------------
@@ -58,17 +60,17 @@ int real_distance(float distance, float angle)
   return real_dist;
 }
 
-void rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance_angle) {
+void rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance_angle, int PWM) {
     if ((dist_BL < (dist_FL - tolerance_angle)) ||
            (dist_FR < (dist_BR - tolerance_angle)))
   {
-    rotate_centered_cclkw();
+    rotate_centered_cclkw(PWM);
     orth = false;
   }
   else if ((dist_FL < (dist_BL - tolerance_angle) ||
             (dist_FR > (dist_BR + tolerance_angle))))
   {
-    rotate_centered_clkw();
+    rotate_centered_clkw(PWM);
     orth = false;
   }
   else if (!orth) {
@@ -77,7 +79,8 @@ void rotational_correction (double dist_FL, double dist_BL, double dist_FR, doub
   }
 }
 
-void translational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance) {
+void translational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance, int PWM) {
+
     if (orth && ((dist_FL >= (dist_FR - tolerance)) &&
                (dist_FL <= (dist_FR + tolerance))))
   {
@@ -86,11 +89,11 @@ void translational_correction (double dist_FL, double dist_BL, double dist_FR, d
   else if (orth && ((dist_FL < (dist_FR - tolerance)) || 
                     (dist_BL < (dist_BR - tolerance))))
   {
-    translate_right();
+    translate_right(PWM);
   }
   else if (orth && ((dist_FL > (dist_FR + tolerance)) || 
                     (dist_BL > (dist_BR + tolerance))))
   {
-    translate_left();
+    translate_left(PWM);
   }
 }

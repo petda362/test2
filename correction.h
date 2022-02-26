@@ -13,8 +13,9 @@ int ultraSensor(int trig, int echo);              // Perform measurements with t
 int real_distance(float distance, float angle);   // Convert the distance recieved from sensor into orthogonal distance based on angle (trigonometry)
 
 
-void rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance);
+void rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance, int PWM);
 
-void translational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance);
+void translational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance, int PWM);
+
 
 #endif

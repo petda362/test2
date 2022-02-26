@@ -7,38 +7,40 @@
 
 
 //---------Defining pins----------------
-#define echopin_FL 50 // Forward Left ultrasonic sensor
-#define trigpin_FL 52
-#define echopin_FR 47 // Forward Right ultrasonic sensor
-#define trigpin_FR 49
-#define echopin_BL 51 // Back Left ultrasonic sensor
-#define trigpin_BL 53
-#define echopin_BR 46 // Back Right ultrasonic sensor
-#define trigpin_BR 48
+#define echopin_FL 40 // Forward Left sensor
+#define trigpin_FL 41
+#define echopin_FR 42 // Forward Right sensor
+#define trigpin_FR 43
+#define echopin_BL 44 // Back Left
+#define trigpin_BL 45
+#define echopin_BR 46 // Back Right
+#define trigpin_BR 47
 
-#define FWDpin_FL 9 // FWD Forward left
-#define BWDpin_FL 8 // BWD -||-
-#define FWDpin_FR 7 // FWD Forward Right
-#define BWDpin_FR 6 // BWD -||-
-#define FWDpin_BL 5 // FWD Backward Left
-#define BWDpin_BL 4 // BWD -||-
-#define FWDpin_BR 3 // FWD Backward Right
-#define BWDpin_BR 2 // BWD -||-
+#define STATE 50      // STATE PIN HC05
+
+#define FWDpin_FL 8 // FWD Forward left
+#define BWDpin_FL 9 // BWD
+#define FWDpin_FR 4 // FWD Forward Right
+#define BWDpin_FR 5 // BWD
+#define FWDpin_BL 6 // FWD Backward LefB
+#define BWDpin_BL 7 // BWD
+#define FWDpin_BR 10 // FWD Backward Right
+#define BWDpin_BR 11 // BWD
 
 
 // --------------------- changeable variables-----------------
-int PWM = 100;                      // Base PWM before modifiers. from 0 to 255
-float multiplier_FL = 0.90;         // Multipliers for seperate wheels, for adjusting motor speed (PWM * multiplier)
-float multiplier_FR = 0.90;
-float multiplier_BL = 1.0;
-float multiplier_BR = 0.90;
-float multiplier_rotation = 0.8;    // multiplier for rotation, for adjusting motor speed whilst rotating (PWM * multiplier)
+
+float multiplier_FL = 0.96;         // Multipliers for seperate wheels, for adjusting motor speed (PWM * multiplier)
+float multiplier_FR = 1;
+float multiplier_BL = 0.96;
+float multiplier_BR = 1;
+float multiplier_rotation = 1;    // multiplier for rotation, for adjusting motor speed whilst rotating (PWM * multiplier)
 int current_dir;
 
 
 // ------------------------------- function ---------------------------
 
-void diagonal_FW_right()
+void diagonal_FW_right(int PWM)
 {
   analogWrite(FWDpin_FL, (PWM * multiplier_FL));
   analogWrite(BWDpin_FL, (0 * multiplier_FL));
@@ -53,7 +55,7 @@ void diagonal_FW_right()
   analogWrite(BWDpin_BR, (0 * multiplier_BR));
 }
 
-void diagonal_FW_left()
+void diagonal_FW_left(int PWM)
 {
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
   analogWrite(BWDpin_FL, (0 * multiplier_FL));
@@ -68,7 +70,7 @@ void diagonal_FW_left()
   analogWrite(BWDpin_BR, (0 * multiplier_BR));
 }
 
-void translate_right()
+void translate_right(int PWM)
 {
   Serial.println("move right");
 
@@ -88,7 +90,7 @@ void translate_right()
 
 }
 
-void translate_left()
+void translate_left(int PWM)
 {
 
   Serial.println("move left");
@@ -142,7 +144,7 @@ void rotate_stop()
   analogWrite(BWDpin_BR, 0);
 }
 
-void translate_FWD()
+void translate_FWD(int PWM)
 {
   Serial.println("Forward");
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
@@ -160,7 +162,7 @@ void translate_FWD()
     current_dir = 1;                                      // Set current direction as translate FWD
 }
 
-void translate_BWD()
+void translate_BWD(int PWM)
 {
   Serial.println("Backward");
   analogWrite(FWDpin_FL, (PWM * multiplier_FL));
@@ -178,7 +180,7 @@ void translate_BWD()
     current_dir = 2;                                      // Set current direction as translate BWD
 }
 
-void rotate_centered_clkw()
+void rotate_centered_clkw(int PWM)
 {
   Serial.println("rotate clockwise");
   analogWrite(FWDpin_FL, (0 * multiplier_FL * multiplier_rotation));
@@ -196,7 +198,7 @@ void rotate_centered_clkw()
   current_dir = 5;                                      // Set current direction as rotate clockwise
 }
 
-void rotate_centered_cclkw()
+void rotate_centered_cclkw(int PWM)
 {
   Serial.println("rotate counter-clockwise");
   analogWrite(FWDpin_FL, (PWM * multiplier_FL * multiplier_rotation));
@@ -214,7 +216,7 @@ void rotate_centered_cclkw()
   current_dir = 6;                                      // Set current direction as rotate counter clockwise
 }
 
-void rotate_clkw_rear()
+void rotate_clkw_rear(int PWM)
 {
   analogWrite(FWDpin_FL, (PWM * multiplier_FL));
   analogWrite(BWDpin_FL, (0 * multiplier_FL));
@@ -231,7 +233,7 @@ void rotate_clkw_rear()
   current_dir = 7;                                      // Set current direction as rotate clockwise on the rear axis
 }
 
-void rotate_cclkw_rear()
+void rotate_cclkw_rear(int PWM)
 {
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
   analogWrite(BWDpin_FL, (PWM * multiplier_FL));
@@ -248,7 +250,7 @@ void rotate_cclkw_rear()
   current_dir = 8;                                      // Set current direction as rotate counter clockwise on the rear axis
 }
 
-void rotate_clkw_front()
+void rotate_clkw_front(int PWM)
 {
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
   analogWrite(BWDpin_FL, (0 * multiplier_FL));
@@ -265,7 +267,7 @@ void rotate_clkw_front()
   current_dir = 9;                                      // Set current direction as rotate clockwise on the front axis
 }
 
-void rotate_cclkw_front()
+void rotate_cclkw_front(int PWM)
 {
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
   analogWrite(BWDpin_FL, (0 * multiplier_FL));
@@ -282,64 +284,64 @@ void rotate_cclkw_front()
   current_dir = 10;                                      // Set current direction as rotate counter clockwise on the rear axis
 }
 
-void quickbrake() {
-    unsigned int delay = PWM / 10;
+void quickbrake(int PWM) {
+    unsigned int brake_delay = (PWM) / 3;
 
     switch(current_dir) {           // Every set of movements has a number correlated to it
         case 1:                     // case = 1 current dir forward
-            translate_BWD();
-            delayMicroseconds(delay);
+            translate_BWD(PWM);
+            delay(brake_delay);
             translate_stop();
 
         break;
         case 2:                     // case = 2 current dir backward
-            translate_FWD();
-            delayMicroseconds(delay);
+            translate_FWD(PWM);
+            delay(brake_delay);
             translate_stop();
         break;
         case 3:                     // case = 3 current dir right
-            translate_left();
-            delayMicroseconds(delay);
+            translate_left(PWM);
+            delay(brake_delay);
             translate_stop();
         break;
         case 4:                     // case = 4 current dir left
-            translate_right();
-            delayMicroseconds(delay);
+            translate_right(PWM);
+            delay(brake_delay);
             translate_stop();
 
         break;
         case 5:                     // case = 5 current dir rotate clkw
-            rotate_centered_cclkw();
-            delayMicroseconds(delay);
+            rotate_centered_cclkw(PWM);
+            delay(brake_delay);
             rotate_stop();
 
         break;
         case 6:                     // case = 6 current dir rotate c-clkw
-            rotate_centered_clkw();
-            delayMicroseconds(delay);
+            rotate_centered_clkw(PWM);
+            delay(brake_delay);
             rotate_stop();
 
         break;
         case 7:                     // case = 7 current dir rotate clockwise on the rear axis
-            rotate_cclkw_rear();    
-            delayMicroseconds(delay);
+            rotate_cclkw_rear(PWM);    
+            delay(brake_delay);
             rotate_stop();
         break;
         case 8:                     // case = 8 current dir rotate counter clockwise on the rear axis
-            rotate_clkw_rear();     
-            delayMicroseconds(delay);
+            rotate_clkw_rear(PWM);     
+            delay(brake_delay);
             rotate_stop();
 
         break;
         case 9:                     // case = 9 current dir rotate clockwise on the front axis
-            rotate_cclkw_front();
-            delayMicroseconds(delay);
+            rotate_cclkw_front(PWM);
+            delay(brake_delay);
             rotate_stop();
 
         break;
         case 10:                    // case 10 current dir rotate counter clockwise on the rear axis
-            rotate_clkw_front();
-            delayMicroseconds(delay);
+            rotate_clkw_front(PWM);
+            delay(brake_delay);
             rotate_stop();
         break;
     }
