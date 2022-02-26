@@ -38,6 +38,36 @@ int current_dir;
 
 // ------------------------------- function ---------------------------
 
+void diagonal_FW_right()
+{
+  analogWrite(FWDpin_FL, (PWM * multiplier_FL));
+  analogWrite(BWDpin_FL, (0 * multiplier_FL));
+
+  analogWrite(FWDpin_FR, (0 * multiplier_FR));
+  analogWrite(BWDpin_FR, (0 * multiplier_FR));
+
+  analogWrite(FWDpin_BL, (0 * multiplier_BL));
+  analogWrite(BWDpin_BL, (0 * multiplier_BL));
+
+  analogWrite(FWDpin_BR, (PWM * multiplier_BR));
+  analogWrite(BWDpin_BR, (0 * multiplier_BR));
+}
+
+void diagonal_FW_left()
+{
+  analogWrite(FWDpin_FL, (0 * multiplier_FL));
+  analogWrite(BWDpin_FL, (0 * multiplier_FL));
+
+  analogWrite(FWDpin_FR, (PWM * multiplier_FR));
+  analogWrite(BWDpin_FR, (0 * multiplier_FR));
+
+  analogWrite(FWDpin_BL, (PWM * multiplier_BL));
+  analogWrite(BWDpin_BL, (0 * multiplier_BL));
+
+  analogWrite(FWDpin_BR, (0 * multiplier_BR));
+  analogWrite(BWDpin_BR, (0 * multiplier_BR));
+}
+
 void translate_right()
 {
   Serial.println("move right");
@@ -184,6 +214,74 @@ void rotate_centered_cclkw()
   current_dir = 6;                                      // Set current direction as rotate counter clockwise
 }
 
+void rotate_clkw_rear()
+{
+  analogWrite(FWDpin_FL, (PWM * multiplier_FL));
+  analogWrite(BWDpin_FL, (0 * multiplier_FL));
+
+  analogWrite(FWDpin_FR, (0 * multiplier_FR));
+  analogWrite(BWDpin_FR, (PWM * multiplier_FR));
+
+  analogWrite(FWDpin_BL, (0 * multiplier_BL));
+  analogWrite(BWDpin_BL, (0 * multiplier_BL));
+
+  analogWrite(FWDpin_BR, (0 * multiplier_BR));
+  analogWrite(BWDpin_BR, (0 * multiplier_BR));
+  
+  current_dir = 7;                                      // Set current direction as rotate clockwise on the rear axis
+}
+
+void rotate_cclkw_rear()
+{
+  analogWrite(FWDpin_FL, (0 * multiplier_FL));
+  analogWrite(BWDpin_FL, (PWM * multiplier_FL));
+
+  analogWrite(FWDpin_FR, (PWM * multiplier_FR));
+  analogWrite(BWDpin_FR, (0 * multiplier_FR));
+
+  analogWrite(FWDpin_BL, (0 * multiplier_BL));
+  analogWrite(BWDpin_BL, (0 * multiplier_BL));
+
+  analogWrite(FWDpin_BR, (0 * multiplier_BR));
+  analogWrite(BWDpin_BR, (0 * multiplier_BR));
+
+  current_dir = 8;                                      // Set current direction as rotate counter clockwise on the rear axis
+}
+
+void rotate_clkw_front()
+{
+  analogWrite(FWDpin_FL, (0 * multiplier_FL));
+  analogWrite(BWDpin_FL, (0 * multiplier_FL));
+
+  analogWrite(FWDpin_FR, (0 * multiplier_FR));
+  analogWrite(BWDpin_FR, (0 * multiplier_FR));
+
+  analogWrite(FWDpin_BL, (PWM * multiplier_BL));
+  analogWrite(BWDpin_BL, (0 * multiplier_BL));
+
+  analogWrite(FWDpin_BR, (0 * multiplier_BR));
+  analogWrite(BWDpin_BR, (PWM * multiplier_BR));
+
+  current_dir = 9;                                      // Set current direction as rotate clockwise on the front axis
+}
+
+void rotate_cclkw_front()
+{
+  analogWrite(FWDpin_FL, (0 * multiplier_FL));
+  analogWrite(BWDpin_FL, (0 * multiplier_FL));
+
+  analogWrite(FWDpin_FR, (0 * multiplier_FR));
+  analogWrite(BWDpin_FR, (0 * multiplier_FR));
+
+  analogWrite(FWDpin_BL, (0 * multiplier_BL));
+  analogWrite(BWDpin_BL, (PWM * multiplier_BL));
+
+  analogWrite(FWDpin_BR, (PWM * multiplier_BR));
+  analogWrite(BWDpin_BR, (0 * multiplier_BR));
+
+  current_dir = 10;                                      // Set current direction as rotate counter clockwise on the rear axis
+}
+
 void quickbrake() {
     unsigned int delay = PWM / 10;
 
@@ -216,11 +314,33 @@ void quickbrake() {
             rotate_stop();
 
         break;
-        case 6:                     // case = 5 current dir rotate c-clkw
+        case 6:                     // case = 6 current dir rotate c-clkw
             rotate_centered_clkw();
             delayMicroseconds(delay);
             rotate_stop();
 
+        break;
+        case 7:                     // case = 7 current dir rotate clockwise on the rear axis
+            rotate_cclkw_rear();    
+            delayMicroseconds(delay);
+            rotate_stop();
+        break;
+        case 8:                     // case = 8 current dir rotate counter clockwise on the rear axis
+            rotate_clkw_rear();     
+            delayMicroseconds(delay);
+            rotate_stop();
+
+        break;
+        case 9:                     // case = 9 current dir rotate clockwise on the front axis
+            rotate_cclkw_front();
+            delayMicroseconds(delay);
+            rotate_stop();
+
+        break;
+        case 10:                    // case 10 current dir rotate counter clockwise on the rear axis
+            rotate_clkw_front();
+            delayMicroseconds(delay);
+            rotate_stop();
         break;
     }
 
