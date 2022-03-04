@@ -44,14 +44,22 @@ int ultraSensor(int trig, int echo)
 {
   long travelTime;
   float distance;
-  clear_pin(trig);
-  delayMicroseconds(2);
-  digitalWrite(trig, HIGH);
-  delayMicroseconds(10);
-  clear_pin(trig);
-  travelTime = pulseIn(echo, HIGH);
-  distance = (travelTime / 2) / 29.1 * 10; // distance in mm
-  return distance;
+  float sum_distances = 0;
+  float avg_distance;
+  int num_measurements = 5;
+  
+  for (int i = 0; i <= num_measurements; i = i + 1) {
+    clear_pin(trig);
+    delayMicroseconds(2);
+    digitalWrite(trig, HIGH);
+    delayMicroseconds(10);
+    clear_pin(trig);
+    travelTime = pulseIn(echo, HIGH);
+    distance = (travelTime / 2) / 29.1 * 10; // distance in mm
+    sum_distances = sum_distances + distance;
+  }
+  avg_distance = sum_distances / num_measurements;
+  return avg_distance;
 }
 
 int real_distance(float distance, float angle)
@@ -75,7 +83,8 @@ void rotational_correction (double dist_FL, double dist_BL, double dist_FR, doub
   }
   else if (!orth) {
     orth = true;
-    rotate_stop();
+    quickbrake(PWM);
+    // rotate_stop();
   }
 }
 
@@ -85,6 +94,7 @@ void translational_correction (double dist_FL, double dist_BL, double dist_FR, d
                (dist_FL <= (dist_FR + tolerance))))
   {
     translate_stop();
+  
   }
   else if (orth && ((dist_FL < (dist_FR - tolerance)) || 
                     (dist_BL < (dist_BR - tolerance))))

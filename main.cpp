@@ -53,10 +53,11 @@
 #define SENSORA_B8 A15
 
 //--------Changeable variables-----------
-int tolerance = 30;                 // Allowed error before the translation corection algorithm is implemented
-int tolerance_angle = 50;           // Allowed error before the rotational correction algoritm is implemented
+int tolerance = 3;                 // Allowed error before the translation corection algorithm is implemented
+int tolerance_angle = 20;           // Allowed error before the rotational correction algoritm is implemented
 float angle = 18.33;                // Angle of the sensors from the vehicle
-int start_pwm = 200;                      // Base PWM before modifiers. from 0 to 255
+int start_pwm = 100;                      // Base PWM before modifiers. from 0 to 255
+int correction_pwm = 60;
 
 // --------Defining variables------------
 long travelTime_FL;
@@ -79,10 +80,14 @@ double last_real_distance_FR;
 double last_real_distance_BL;
 double last_real_distance_BR;
 
+double rotate_delay;
+double z;
+
 bool nope = false;
 bool turned = false;
 bool goagain = false;
 bool biggus = false;
+bool cp_variabel = false;
 
 
 // -------------------------Setup-------------------
@@ -131,17 +136,17 @@ void setup()
 //-----------Main loop-------------------------------------
 void loop()
 {
-//   // Calculates the orthogonal distance from the wall to the sensor based on the snesor angle
+  // Calculates the orthogonal distance from the wall to the sensor based on the snesor angle
 //   real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
 //   real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
 //   real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
 //   real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
 
-//   rotational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance_angle);
+//   rotational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance_angle, start_pwm);
 
-//   translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance);
+//   translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance, start_pwm);
 
-  last_real_distance_FL = real_distance_FL ;
+  last_real_distance_FL = real_distance_FL;
   last_real_distance_FR = real_distance_FR;
   last_real_distance_BL = real_distance_BL;
   last_real_distance_BR = real_distance_BR;
@@ -151,10 +156,23 @@ void loop()
   real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
   real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
   
+    // rotate_delay = -0.0004*pow(start_pwm, 3) + 0.2537*pow(start_pwm,2) - 53.176*(start_pwm) + 4288.3;
+    z = (start_pwm - 175) / 47.6;
+    rotate_delay = -45.1 * pow(z,3) + 77.5 * pow(z,2) - 133 * pow(z,1) + 510;
+
+    // Serial.println(rotate_delay);
+    // rotate_centered_clkw(start_pwm);
+    // delay(rotate_delay);
+    // rotate_stop();
+    // delay(10000);
+    
+ 
+
  
   if(!nope && !biggus) {translate_FWD(start_pwm);}
   if((!biggus && abs(last_real_distance_FL-real_distance_FL) > 200) || (!biggus && abs(last_real_distance_FR-real_distance_FR) > 200 ))
   {
+      delay(300);
     translate_stop();
     nope = true;
     delay(1500);
@@ -162,7 +180,7 @@ void loop()
     if(!turned && nope && !biggus)
   {
     rotate_centered_clkw(start_pwm);
-    delay(462);
+    delay(rotate_delay);
     rotate_stop();
     delay(1000);
     turned = true;
@@ -170,24 +188,19 @@ void loop()
   if(!goagain && nope && turned && !biggus)
   {
     translate_FWD(start_pwm);
-    delay(800);
+    delay(2000);
     translate_stop();
+        
     goagain = true;
     biggus = true;
-    start_pwm = 90;
+    cp_variabel = true;
+  }
+  if (cp_variabel) {
+      rotational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance_angle, correction_pwm);
+
+      translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance, correction_pwm);
 
   }
-    if(biggus && goagain && nope && turned) {
-        rotational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance_angle, start_pwm);
-
-        translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance, start_pwm);
-    }
-
-    // start_pwm = 80;
-
-    // rotational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance_angle, start_pwm);
-
-    //     translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance, start_pwm);
 
 
 }
