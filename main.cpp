@@ -48,6 +48,9 @@ int distance_FR;
 int distance_BL;
 int distance_BR;
 
+String BTBYTE;  // Received signal string.
+String INBYTE;  // Transmitting signal string.
+
 double real_distance_FL;
 double real_distance_FR;
 double real_distance_BL;
@@ -55,6 +58,7 @@ double real_distance_BR;
 
 String OS_signal; // ÖS_Signal
 
+SoftwareSerial BTSerial(13,12); // RX , TX
 
 
 // -------------------------Setup-------------------
@@ -78,8 +82,11 @@ void setup()
   pinMode(FWDpin_BR, OUTPUT);
   pinMode(BWDpin_BR, OUTPUT);
 
-  Serial.begin(9600);                                            // // Serial Communication is starting with 9600 of baudrate speed
+  Serial.begin(9600);                                            // Serial Communication is starting with 9600 of baudrate speed
+  BTSerial.begin(9600);
   Serial.println("Ultrasonic Sensor HC-SR04 Test, translation"); // print some text in Serial Monitor
+
+
 }
 
 //-----------Main loop-------------------------------------
@@ -96,4 +103,24 @@ void loop()
   //translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance);
 
   OS_signal = readBluetoothData();
+  
+
+int l = 0;      // l = length of recieved signal.
+if(BTSerial.available())        
+{
+    BTBYTE=BTSerial.readString();
+    l=BTBYTE.length();              // Längden på BTBYTE.
+    //Serial.println("111");  // Test
+    BTSerial.println(BTBYTE);
+    Serial.print(BTBYTE);           // Skriver ut BTBYTE i Serial (Serialen på arduino:n).
+    
+}
+if(Serial.available())              // 
+{
+    INBYTE = Serial.readString();      
+    BTSerial.println(INBYTE);       // Skriver ut INBYTE i BTSerial (Bluetooth Transmitterns Serialen).
+    Serial.print(INBYTE);
+    //Serial.println("222");  // Test
+}
+
 }
