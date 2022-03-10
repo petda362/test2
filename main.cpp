@@ -10,6 +10,7 @@
 #include <Arduino.h>
 #include <math.h>
 #include "correction.h"
+#include "SoftwareSerial.h"
 #include "movement.h"
 
 //---------Defining pins----------------
