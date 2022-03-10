@@ -7,7 +7,7 @@
 // Konrad Råström ED3
 // Petter Danev ED5
 
-// Main branch
+// PROTOTYPE BRANCH FOR TESTING PURPOSES
 
 //-------------Libraries---------------
 #include <Arduino.h>
