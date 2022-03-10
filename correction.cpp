@@ -1,6 +1,3 @@
-// test 3
-// ggggggggggg
-// fffffffffffffffffff
 //-------------Libraries---------------
 #include <Arduino.h>
 #include <math.h>
