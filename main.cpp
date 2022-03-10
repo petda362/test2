@@ -96,6 +96,21 @@ bool goagain = false;
 bool biggus = false;
 bool cp_variabel = false;
 
+// ------------------------PID-------------------------------------------------------
+    unsigned long time_last, time_current;
+    float time_diff;
+    float error, error2, P, P2, I, I2, D, D2, pid_output, pid_output2, last_error, last_error2;
+    
+    float Kp = 0.5;
+    float Ki = 0;//.008;
+    float Kd = 0;//.25;
+
+    float Kp2 = 0.5;
+    float Ki2 = 0;
+    float Kd2 = 0;
+
+    const float pid_max  = 60;
+    const float pid_min = -60;
 
 // -------------------------Setup-------------------
 void setup()
@@ -215,4 +230,35 @@ void loop()
 //   }
 
 
+}
+
+void calcPID()
+{
+    time_last = time_current;
+    time_current = millis();
+    time_diff = (float)(time_current - time_last)/1000;
+
+    error = abs(real_distance_FL - real_distance_FR);
+    error2 = abs(real_distance_FL - real_distance_BR);
+    
+    P = error;
+    P2 = error2;
+    
+    I += error*time_diff;
+    I2 += error2*time_diff;
+    
+    D = (error - last_error)/time_diff;
+    D2 = (error2 - last_error2)/time_diff;
+    
+    pid_output = Kp*P + Ki*I + Kd*D;
+    pid_output2 = Kp2*P2 + Ki2*I2 + Kd2*D2;
+    
+    Serial.print("pid: ");
+    Serial.println(pid_output);
+    if(pid_output > pid_max){pid_output = pid_max;}
+    if(pid_output < pid_min){pid_output = pid_min;}
+    
+    if(pid_output2 > pid_max){pid_output2 = pid_max;}
+    if(pid_output2 < pid_min){pid_output2 = pid_min;}
+    
 }
