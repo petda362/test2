@@ -102,25 +102,37 @@ void loop()
 
   //translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance);
 
-  OS_signal = readBluetoothData();
+  //OS_signal = readBluetoothData();
   
 
 int l = 0;      // l = length of recieved signal.
-if(BTSerial.available())        
+if(BTSerial.available())    // Till AGV    
 {
     BTBYTE=BTSerial.readString();
-    l=BTBYTE.length();              // Längden på BTBYTE.
-    //Serial.println("111");  // Test
-    BTSerial.println(BTBYTE);
-    Serial.print(BTBYTE);           // Skriver ut BTBYTE i Serial (Serialen på arduino:n).
-    
+    INBYTE=readBluetoothData(BTBYTE); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
+    //l=BTBYTE.length();              // Längden på BTBYTE.
+    //Serial.println("111");          // Test
+    //BTSerial.println(BTBYTE);
+    //Serial.print(BTBYTE);           // Skriver ut BTBYTE i Serial (Serialen på arduino:n).
+    Serial.println(BTBYTE);
+    Serial.print(BTBYTE.substring(1, 8));
+    Serial.print(", ");
+    Serial.println(INBYTE);     // Send string message to serial.
 }
-if(Serial.available())              // 
-{
-    INBYTE = Serial.readString();      
-    BTSerial.println(INBYTE);       // Skriver ut INBYTE i BTSerial (Bluetooth Transmitterns Serialen).
-    Serial.print(INBYTE);
-    //Serial.println("222");  // Test
+if(Serial.available())              // Från AGV
+{   
+    INBYTE = Serial.readString();
+    //INBYTE=readBluetoothData(BTBYTE);
+    //l=BTBYTE.length();              // Längden på BTBYTE.
+    //Serial.println("111");          // Test
+    //BTSerial.println(BTBYTE);
+    //Serial.print(BTBYTE);           // Skriver ut BTBYTE i Serial (Serialen på arduino:n).
+    BTSerial.println(INBYTE);     // Send string message to serial.
+
+    //INBYTE = Serial.readString();      
+    //BTSerial.println(INBYTE);       // Skriver ut INBYTE i BTSerial (Bluetooth Transmitterns Serialen).
+    //Serial.print(INBYTE);
+    //Serial.println("222");      // Test
 }
 
 }

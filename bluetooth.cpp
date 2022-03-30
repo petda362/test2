@@ -9,9 +9,12 @@
 String i = "test";
 
 // ------------------------------- function ---------------------------
-String readBluetoothData()
+String readBluetoothData(String BTBYTE)
 {
-return i;
+    // Dela upp BTBYTE meddelanden.
+    
+    return "Tagit emot meddelandet.";
 }
+
 
 

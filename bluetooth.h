@@ -6,7 +6,7 @@
 
 // ------------Function declaration--------------------------------
 
-String readBluetoothData();
+String readBluetoothData(String BTBYTE);
 
 
 
