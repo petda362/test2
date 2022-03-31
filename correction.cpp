@@ -64,7 +64,7 @@ int real_distance(float distance, float angle)
 
 void translate_right()
 {
-  Serial.println("move right");
+  Serial.println("translate right");
 
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
   analogWrite(BWDpin_FL, (PWM * multiplier_FL));
@@ -82,7 +82,7 @@ void translate_right()
 void translate_left()
 {
 
-  Serial.println("move left");
+  Serial.println("translate left");
 
   analogWrite(FWDpin_FL, (PWM * multiplier_FL));
   analogWrite(BWDpin_FL, (0 * multiplier_FL));
@@ -99,7 +99,7 @@ void translate_left()
 
 void translate_stop()
 {
-  Serial.println("Centered");
+  Serial.println("centerd (translate stop)");
 
   analogWrite(FWDpin_FL, 0);
   analogWrite(BWDpin_FL, 0);
@@ -116,7 +116,7 @@ void translate_stop()
 
 void rotate_stop()
 {
-  Serial.println("ortogonal");
+  Serial.println("ortogonal (rotate stop)");
 
   analogWrite(FWDpin_FL, 0);
   analogWrite(BWDpin_FL, 0);
@@ -133,7 +133,7 @@ void rotate_stop()
 
 void translate_FWD()
 {
-  Serial.println("Forward");
+  Serial.println("Move forward");
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
   analogWrite(BWDpin_FL, (PWM * multiplier_FL));
 
@@ -149,7 +149,7 @@ void translate_FWD()
 
 void translate_BWD()
 {
-  Serial.println("Backward");
+  Serial.println("Move backward");
   analogWrite(FWDpin_FL, (PWM * multiplier_FL));
   analogWrite(BWDpin_FL, (0 * multiplier_FL));
 

@@ -84,8 +84,8 @@ void setup()
 
   Serial.begin(9600);                                            // Serial Communication is starting with 9600 of baudrate speed
   BTSerial.begin(9600);
-  Serial.println("Ultrasonic Sensor HC-SR04 Test, translation"); // print some text in Serial Monitor
-
+  Serial.println("Ultrasonic Sensor HC-SR04 Test, translation."); // print some text in Serial Monitor
+  BTSerial.println("Connected to AGV.");  // Print on bluetooth device.
 
 }
 
@@ -114,10 +114,10 @@ if(BTSerial.available())    // Till AGV
     //Serial.println("111");          // Test
     //BTSerial.println(BTBYTE);
     //Serial.print(BTBYTE);           // Skriver ut BTBYTE i Serial (Serialen på arduino:n).
-    Serial.println(BTBYTE);
-    Serial.print(BTBYTE.substring(1, 8));
-    Serial.print(", ");
-    Serial.println(INBYTE);     // Send string message to serial.
+    Serial.print(BTBYTE);
+    //Serial.print(BTBYTE.substring(1, 8)); // substring(startpunkt, slutpunkt+1)
+    //Serial.print(", ");
+    BTSerial.println(INBYTE);     // Send string message to serial.
 }
 if(Serial.available())              // Från AGV
 {   
