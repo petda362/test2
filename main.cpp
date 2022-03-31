@@ -5,7 +5,8 @@
 // Alexander Riex ED4
 // Henrik Nilsson ED3
 // Konrad Råström ED3
-// Petter Danev ED5
+// Petter Danev ED5 
+//------
 
 // Main branch
 
@@ -95,7 +96,6 @@ bool turned = false;
 bool goagain = false;
 bool biggus = false;
 bool cp_variabel = false;
-
 
 // -------------------------Setup-------------------
 void setup()
