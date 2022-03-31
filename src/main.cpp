@@ -185,7 +185,7 @@ int l = 0;      // l = length of recieved signal.
 if(BTSerial.available())    // Till AGV    
 {
     BTBYTE=BTSerial.readString();
-    //INBYTE=readBluetoothData(BTBYTE); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
+    INBYTE=readBluetoothData(BTBYTE); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
     //l=BTBYTE.length();              // Längden på BTBYTE.
     //Serial.println("111");          // Test
     //BTSerial.println(BTBYTE);
