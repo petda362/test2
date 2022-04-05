@@ -127,6 +127,7 @@ void setup()
   Serial.println("Ultrasonic Sensor HC-SR04 Test, translation."); // print some text in Serial Monitor
   BTSerial.println("Connected to AGV.");  // Print on bluetooth device.
 
+  // IR sensorernas input.
   pinMode(SENSORA_F1,INPUT);
   pinMode(SENSORA_F2,INPUT);
   pinMode(SENSORA_F3,INPUT);
@@ -146,9 +147,6 @@ void setup()
   pinMode(SENSORA_B8,INPUT);
 
   pinMode(buzzer_pin, OUTPUT);
-  Serial.begin(9600);                                            // // Serial Communication is starting with 9600 of baudrate speed
-  Serial.println("Ultrasonic Sensor HC-SR04 Test, translation"); // print some text in Serial Monitor
-
   
   sing(startup_sound);
 
@@ -157,7 +155,7 @@ void setup()
 //-----------Main loop-------------------------------------
 void loop()
 {
-  // Calculates the orthogonal distance from the wall to the sensor based on the snesor angle
+  // Calculates the orthogonal distance from the wall to the sensor based on the sensor angle
 //   real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
 //   real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
 //   real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
@@ -181,19 +179,17 @@ void loop()
 //     z = (start_pwm - 175) / 47.6;
 //     rotate_delay = -45.1 * pow(z,3) + 77.5 * pow(z,2) - 133 * pow(z,1) + 510;
 
-int l = 0;      // l = length of recieved signal.
 if(BTSerial.available())    // Till AGV    
 {
     BTBYTE=BTSerial.readString();
-    INBYTE=readBluetoothData(BTBYTE); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
+    INBYTE=readBluetoothData(BTBYTE, start_pwm); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
     //l=BTBYTE.length();              // Längden på BTBYTE.
     //Serial.println("111");          // Test
     //BTSerial.println(BTBYTE);
     //Serial.print(BTBYTE);           // Skriver ut BTBYTE i Serial (Serialen på arduino:n).
     Serial.println(BTBYTE);
-    Serial.print(BTBYTE.substring(1, 8));
-    Serial.print(", ");
-    Serial.println(INBYTE);     // Send string message to serial.
+    //Serial.print(BTBYTE.substring(1, 8));
+    BTSerial.println(INBYTE);     // Send string message to serial.
 }
 if(Serial.available())              // Från AGV
 {   
@@ -248,3 +244,4 @@ if(Serial.available())              // Från AGV
 
 }
 }
+

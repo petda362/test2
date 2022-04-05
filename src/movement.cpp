@@ -27,7 +27,7 @@
 #define BWDpin_FL 9 // BWD
 #define FWDpin_FR 4 // FWD Forward Right
 #define BWDpin_FR 5 // BWD
-#define FWDpin_BL 6 // FWD Backward LefB
+#define FWDpin_BL 6 // FWD Backward Left
 #define BWDpin_BL 7 // BWD
 #define FWDpin_BR 10 // FWD Backward Right
 #define BWDpin_BR 11 // BWD
