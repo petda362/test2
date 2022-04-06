@@ -11,12 +11,11 @@ char Zone;
 char Instruction;
 char Ack;
 char direction;
+int i=0;
 
 int sensorValue1, sensorValue2, sensorValue3, sensorValue4, sensorValue5, sensorValue6, sensorValue7, sensorValue8;
 int sensorValue9, sensorValue10, sensorValue11, sensorValue12, sensorValue13, sensorValue14, sensorValue15, sensorValue16;
 //int tapeCount = 0;
-
-SoftwareSerial BlueTSerial(13,12); // RX , TX
 
 // --------------------- changeable variables-----------------
 
@@ -42,9 +41,6 @@ int PWM_3 = 60; // PWM för zon 3. Måste kalibreras!
 #define SENSORA_B7 A11
 #define SENSORA_B8 A15
 
-#define STATE 50      // STATE PIN HC05
-
-
 // ------------------------------- function ---------------------------
 
 String readBluetoothData(String BTBYTE, int PWM)    // PWM för zon 1 och 2.
@@ -56,13 +52,11 @@ String readBluetoothData(String BTBYTE, int PWM)    // PWM för zon 1 och 2.
     Instruction=BTBYTE[2];  // Instruktion.
     INBYTE[0]=BTBYTE[3];    // Ack.
     //direction=BTBYTE[0];
-    Serial.println();
+    Serial.println("TEST");
     
     switch (State1) // Ta bort???
     {
     case '0':   // Manuell
-            
-        break;
     case '1':   // Automatisk
             switch (Zone)
             {
@@ -73,7 +67,7 @@ String readBluetoothData(String BTBYTE, int PWM)    // PWM för zon 1 och 2.
     
                 case '2':   // Zone 2
                         INBYTE=Instructions(Instruction, PWM, INBYTE);
-                        // if IR-sensor har hittat linje return message[2]=p
+                        // if IR-sensor har hittat linje return INBYTE[2]=p
                         //return "In zone 2";
                     break;
         
@@ -106,6 +100,8 @@ String Instructions(char inst, int PWM, String INBYTE){
     
     case 'f':
         translate_FWD(PWM);
+        delay(1000);
+        translate_stop();
         INBYTE[1]='1';  //Klar
         break;
     
@@ -179,15 +175,52 @@ return INBYTE;
 String Tejpbitar(char inst, int PWM, String INBYTE)
 {
     // Loopa hela funktionen tills man hittar rätt antal tejpbitar.
+    while(INBYTE[1] == '0') //Loop while looking for the coorect tejpbit.
+    {
     readIRData();
     translate_FWD(PWM);
     // IR-sensor kod.
     if(((sensorValue9+sensorValue10+sensorValue11+sensorValue12+sensorValue13+sensorValue14+sensorValue15+sensorValue16) / 8) > 
     ((sensorValue1+sensorValue2+sensorValue3+sensorValue4+sensorValue5+sensorValue6+sensorValue7+sensorValue8+600) / 8))
     {
-        BlueTSerial.println("Här"); // Kolla om det funkar. Om BlueTSerial funkar print "INBYTE", INBYTE[2]='p'.
-    }                   
-return "Skriv här.";
+        i++;
+        switch (inst)
+    {
+    case 'x':
+        if (i==1)
+        {
+            INBYTE[1]='1';  // Klar
+            INBYTE[2]='p';  // Skickar tillbaka att den har passerat en tejpbit
+            i=0;
+             
+        }
+        break;
+    case 'y':
+        if (i==2)
+        {
+            INBYTE[1]='1';  // Klar
+            INBYTE[2]='p';  // Skickar tillbaka att den har passerat en tejpbit
+            i=0;
+        }
+        break;
+    case 'z':
+        if (i==3)
+        {
+            INBYTE[1]='1';  // Klar
+            INBYTE[2]='p';  // Skickar tillbaka att den har passerat en tejpbit.    
+            i=0;
+        }
+        break;
+    
+    default:
+        INBYTE[2]='p';  // Skickar tillbaka att den har passerat en tejpbit.
+      //  BTSerial.println(INBYTE);
+        break;
+    }
+    
+    }   
+    }    
+return INBYTE;
 }
 
 void readIRData()

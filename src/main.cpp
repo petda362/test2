@@ -30,12 +30,12 @@
 #define STATE 50      // STATE PIN HC05
 #define buzzer_pin 30 // pin for audio buzzer
 
-#define FWDpin_FL 8 // FWD Forward left
-#define BWDpin_FL 9 // BWD
+#define FWDpin_FL 9 // FWD Forward left
+#define BWDpin_FL 8 // BWD
 #define FWDpin_FR 4 // FWD Forward Right
 #define BWDpin_FR 5 // BWD
-#define FWDpin_BL 6 // FWD Backward LefB
-#define BWDpin_BL 7 // BWD
+#define FWDpin_BL 7 // FWD Backward LefB
+#define BWDpin_BL 6 // BWD
 #define FWDpin_BR 10 // FWD Backward Right
 #define BWDpin_BR 11 // BWD
 
@@ -98,6 +98,9 @@ bool cp_variabel = false;
 
 String BTBYTE;  // Received signal string.
 String INBYTE;  // Transmitting signal string.
+String Empty;
+char tempCommand[4];// variable for new string
+String Command;
 
 SoftwareSerial BTSerial(13,12); // RX , TX
 
@@ -179,18 +182,40 @@ void loop()
 //     z = (start_pwm - 175) / 47.6;
 //     rotate_delay = -45.1 * pow(z,3) + 77.5 * pow(z,2) - 133 * pow(z,1) + 510;
 
+
+char num1 = 's';
+String num2 = "s";
+
 if(BTSerial.available())    // Till AGV    
 {
     BTBYTE=BTSerial.readString();
-    INBYTE=readBluetoothData(BTBYTE, start_pwm); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
+    //bygger ny string av BTbyte som inte har det osynliga tecknet
+    for (int i = 0; i < 4; ++i){
+    Command = Command + BTBYTE[i];
+    }
+    Serial.println(Command);
     //l=BTBYTE.length();              // Längden på BTBYTE.
     //Serial.println("111");          // Test
     //BTSerial.println(BTBYTE);
     //Serial.print(BTBYTE);           // Skriver ut BTBYTE i Serial (Serialen på arduino:n).
-    Serial.println(BTBYTE);
-    //Serial.print(BTBYTE.substring(1, 8));
+    //Serial.println(BTBYTE);
+    INBYTE=readBluetoothData(Command, start_pwm); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
+    
+    Serial.println("DÄR!!!");
     BTSerial.println(INBYTE);     // Send string message to serial.
+    
 }
+if (Command == "ssss"){
+  Serial.println("I stop funktion");
+  delay(4000);
+}
+else{
+  Serial.println(BTBYTE.length());
+  Serial.println(BTBYTE);
+  Serial.println("HÄR!!!");
+  delay(1000); //1 sek = 1'000mm.
+}
+
 if(Serial.available())              // Från AGV
 {   
     INBYTE = Serial.readString();
