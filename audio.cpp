@@ -265,34 +265,35 @@ int Tempo_Pirater[] = {
 //-----------------functions------------------
 
 //song variables
-int song = 0;
-int Melody[];
-int Tempo[];
+int Melody[200];
+int Tempo[200];
 int size;
-int noteDuration = 0;
+int noteDuration;
 
 void sing(int s) {
-  // iterate over the notes of the melody:
-  song = s;
+  
+  // make requested song
   switch(s){
     case 0: Melody[0] = 0;
     Tempo[0] = 0;
     size = 0;
 
-    case 1: for(int i =0; i < sizeof(Melody_Lasagna); ++i){
+    case 1: for(unsigned i = 0; i < sizeof(Melody_Lasagna); ++i){
     Melody[i] = Melody_Lasagna[i];
     Tempo[i] = Tempo_Lasagna[i];
+    
     }
-    size = sizeof(Melody_Lasagna) / sizeof(int);
-    case 2: for(int i =0; i < sizeof(Melody_Pirater); ++i){
+    size = sizeof(Melody_Lasagna);// / sizeof(int);
+
+    case 2: for(unsigned i =0; i < sizeof(Melody_Pirater); ++i){
     Melody[i] = Melody_Pirater[i];
     Tempo[i] = Tempo_Pirater[i];
     }
-    size = sizeof(Melody_Lasagna) / sizeof(int);
+    size = sizeof(Melody_Pirater);// / sizeof(int);
     
     }
     
-    
+    // iterate over the notes of the melody:
     for (int thisNote = 0; thisNote < size; thisNote++) {
 
       // to calculate the note duration, take one second
