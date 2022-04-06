@@ -4,7 +4,7 @@
 #include "bluetooth.h"
 #include "movement.h"
 #include "SoftwareSerial.h"
-
+#include <Servo.h>
 // --------Defining variables------------
 char State1;
 char Zone;
@@ -242,4 +242,14 @@ void readIRData()
    sensorValue14 = analogRead(SENSORA_B6);
    sensorValue15 = analogRead(SENSORA_B7);
    sensorValue16 =  analogRead(SENSORA_B8);
+}
+
+void Plocka()
+{
+//for (pos i = 0; i < count; i++)
+{
+    /* code */
+}
+
+
 }
