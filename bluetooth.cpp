@@ -35,6 +35,7 @@ double real_distance_FR;
 double real_distance_BL;
 double real_distance_BR;
 
+
 int sensorValue1, sensorValue2, sensorValue3, sensorValue4, sensorValue5, sensorValue6, sensorValue7, sensorValue8;
 int sensorValue9, sensorValue10, sensorValue11, sensorValue12, sensorValue13, sensorValue14, sensorValue15, sensorValue16;
 
@@ -42,6 +43,7 @@ int sensorValue9, sensorValue10, sensorValue11, sensorValue12, sensorValue13, se
 // --------------------- changeable variables-----------------
 
 int PWM_3 = 60; // PWM för zon 3. Måste kalibreras!
+
 
 
 
@@ -98,8 +100,9 @@ String readBluetoothData(String BTBYTE, int PWM, bool plock)    // PWM för zon 
     Zone=BTBYTE[2];         // Vilken zon.
     Instruction=BTBYTE[3];  // Instruktion.
   
+
     //direction=BTBYTE[0];
-    Serial.println("TEST");
+    //Serial.println("TEST");
     
     switch (State1) // Ta bort???
     {
@@ -135,7 +138,8 @@ String readBluetoothData(String BTBYTE, int PWM, bool plock)    // PWM för zon 
     return INBYTE;
 }
 
-String Instructions(char inst, int PWM, String INBYTE){
+String Instructions(char inst, int PWM, String INBYTE)
+{
 
     switch (inst)
     {
@@ -270,7 +274,9 @@ case 'm':
     INBYTE[2]='u';  // Plockning utförd
     INBYTE[1]='1';  // Klar
     break;
-
+case 'q':
+    Plockat();
+    break;
 default:
     break;
 }
@@ -378,4 +384,15 @@ Tape = 0;
      
         }
         translate_stop();
+}
+
+void Plockat()  //Servo plocka rörelse funktionen.
+{
+for (int pos = 0; pos <=120; pos+=10)
+{
+    myservo.write(pos);
+    delay(15);
+}
+delay(300);
+myservo.write(0);
 }
