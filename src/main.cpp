@@ -59,12 +59,13 @@
 #define SENSORA_B8 A15
 
 //--------Changeable variables-----------
-int tolerance = 3;                 // Allowed error before the translation corection algorithm is implemented
-int tolerance_angle = 20;           // Allowed error before the rotational correction algoritm is implemented
-float angle = 18.33;                // Angle of the sensors from the vehicle
-int start_pwm = 100;                      // Base PWM before modifiers. from 0 to 255
+//int tolerance = 3;                 // Allowed error before the translation corection algorithm is implemented
+//int tolerance_angle = 20;           // Allowed error before the rotational correction algoritm is implemented
+//float angle = 18.33;                // Angle of the sensors from the vehicle
+int start_pwm = 200;                      // Base PWM before modifiers. from 0 to 255
 int correction_pwm = 60;
 int startup_sound = 1;              // if 1 = sing if 0 dont sing
+bool plock = false;
 
 // --------Defining variables------------
 long travelTime_FL;
@@ -77,15 +78,15 @@ int distance_FR;
 int distance_BL;
 int distance_BR;
 
-double real_distance_FL;
-double real_distance_FR;
-double real_distance_BL;
-double real_distance_BR;
+//double real_distance_FL;
+//double real_distance_FR;
+//double real_distance_BL;
+//double real_distance_BR;
 
-double last_real_distance_FL;
-double last_real_distance_FR;
-double last_real_distance_BL;
-double last_real_distance_BR;
+//double last_real_distance_FL;
+//double last_real_distance_FR;
+//double last_real_distance_BL;
+//double last_real_distance_BR;
 
 double rotate_delay;
 double z;
@@ -183,13 +184,11 @@ void loop()
 //     rotate_delay = -45.1 * pow(z,3) + 77.5 * pow(z,2) - 133 * pow(z,1) + 510;
 
 
-char num1 = 's';
-String num2 = "s";
-
 if(BTSerial.available())    // Till AGV    
 {
     BTBYTE=BTSerial.readString();
     //bygger ny string av BTbyte som inte har det osynliga tecknet
+    Command ="";
     for (int i = 0; i < 4; ++i){
     Command = Command + BTBYTE[i];
     }
@@ -199,9 +198,9 @@ if(BTSerial.available())    // Till AGV
     //BTSerial.println(BTBYTE);
     //Serial.print(BTBYTE);           // Skriver ut BTBYTE i Serial (Serialen på arduino:n).
     //Serial.println(BTBYTE);
-    INBYTE=readBluetoothData(Command, start_pwm); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
-    
-    Serial.println("DÄR!!!");
+    INBYTE=readBluetoothData(Command, start_pwm, plock); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
+    plock = true;
+    //Serial.println("DÄR!!!");
     BTSerial.println(INBYTE);     // Send string message to serial.
     
 }
@@ -212,8 +211,8 @@ if (Command == "ssss"){
 else{
   Serial.println(BTBYTE.length());
   Serial.println(BTBYTE);
-  Serial.println("HÄR!!!");
-  delay(1000); //1 sek = 1'000mm.
+ // Serial.println("HÄR!!!");
+  delay(1000); //1 sek = 1'000ms.
 }
 
 if(Serial.available())              // Från AGV
