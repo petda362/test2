@@ -359,7 +359,8 @@ void readIRData()
   // Serial.println(calc1 , "    ", calc2);
 }
 
-void Plockat(){
+void Plockat() // funktion för att plocka klossen från hyllan
+{
     for(int pos=0; pos <= 120; pos+=10){
         myservo.write(pos);
         delay(15);
@@ -368,7 +369,8 @@ delay(300);
 myservo.write(0);
 }
 
-void Tapestop(int nr, int PWM){
+void Tapestop(int nr, int PWM) // funktion för att stanna vid tejp nr
+{
 Tape = 0;
         translate_FWD(PWM);
         while(Tape < nr){
@@ -386,13 +388,4 @@ Tape = 0;
         translate_stop();
 }
 
-void Plockat()  //Servo plocka rörelse funktionen.
-{
-for (int pos = 0; pos <=120; pos+=10)
-{
-    myservo.write(pos);
-    delay(15);
-}
-delay(300);
-myservo.write(0);
-}
+
