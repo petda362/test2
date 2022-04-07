@@ -13,6 +13,7 @@ char Ack;
 char direction;
 int i=0;
 
+
 int sensorValue1, sensorValue2, sensorValue3, sensorValue4, sensorValue5, sensorValue6, sensorValue7, sensorValue8;
 int sensorValue9, sensorValue10, sensorValue11, sensorValue12, sensorValue13, sensorValue14, sensorValue15, sensorValue16;
 //int tapeCount = 0;
@@ -20,6 +21,10 @@ int sensorValue9, sensorValue10, sensorValue11, sensorValue12, sensorValue13, se
 // --------------------- changeable variables-----------------
 
 int PWM_3 = 60; // PWM för zon 3. Måste kalibreras!
+
+//------def var----------
+
+int pos=0;
 
 //---------Defining pins----------------
 
@@ -41,18 +46,23 @@ int PWM_3 = 60; // PWM för zon 3. Måste kalibreras!
 #define SENSORA_B7 A11
 #define SENSORA_B8 A15
 
+Servo myservo;
+
+
 // ------------------------------- function ---------------------------
 
-String readBluetoothData(String BTBYTE, int PWM)    // PWM för zon 1 och 2.
+String readBluetoothData(String BTBYTE, int PWM, int servo_pin)    // PWM för zon 1 och 2.
 {
+    myservo.attach(servo_pin);
+
     String INBYTE="000";  // Return string.
     // Dela upp BTBYTE meddelanden (*/*/*/*).
-    State1=BTBYTE[0];       // Auto eller manuell.
-    Zone=BTBYTE[1];         // Vilken zon.
-    Instruction=BTBYTE[2];  // Instruktion.
-    INBYTE[0]=BTBYTE[3];    // Ack.
+    State1=BTBYTE[1];       // Auto eller manuell.
+    Zone=BTBYTE[2];         // Vilken zon.
+    Instruction=BTBYTE[3];  // Instruktion.
+    INBYTE[0]=BTBYTE[0];    // Ack.
     //direction=BTBYTE[0];
-    Serial.println("TEST");
+    //Serial.println("TEST");
     
     switch (State1) // Ta bort???
     {
@@ -88,7 +98,8 @@ String readBluetoothData(String BTBYTE, int PWM)    // PWM för zon 1 och 2.
     return INBYTE;
 }
 
-String Instructions(char inst, int PWM, String INBYTE){
+String Instructions(char inst, int PWM, String INBYTE)
+{
 
     switch (inst)
     {
@@ -139,7 +150,7 @@ case 'l':   // Vänster block
     translate_left(PWM);
     delay(time);    
     translate_stop();
-    // Plocka
+    Plockat();
     translate_right(PWM);
     delay(time);    
     translate_stop();
@@ -151,7 +162,7 @@ case 'h':   // Vänster block
     translate_right(PWM);
     delay(time);    
     translate_stop();
-    // Plocka
+    Plockat();
     translate_left(PWM);
     delay(time);    
     translate_stop();
@@ -164,7 +175,9 @@ case 'm':
     INBYTE[2]='u';  // Plockning utförd
     INBYTE[1]='1';  // Klar
     break;
-
+case 'q':
+    Plockat();
+    break;
 default:
     break;
 }
@@ -244,12 +257,13 @@ void readIRData()
    sensorValue16 =  analogRead(SENSORA_B8);
 }
 
-void Plocka()
+void Plockat()  //Servo plocka rörelse funktionen.
 {
-//for (pos i = 0; i < count; i++)
+for (pos = 0; pos <=120; pos+=10)
 {
-    /* code */
+    myservo.write(pos);
+    delay(15);
 }
-
-
+delay(300);
+myservo.write(0);
 }

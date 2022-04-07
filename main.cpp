@@ -6,7 +6,6 @@
 // Henrik Nilsson ED3
 // Konrad Råström ED3
 // Petter Danev ED5
-// Ta bort
 
 //-------------Libraries---------------
 #include <Arduino.h>
@@ -16,6 +15,7 @@
 #include "SoftwareSerial.h"
 #include "movement.h"
 #include "audio.h"
+#include <Servo.h>
 
 //---------Defining pins----------------
 #define echopin_FL 40 // Forward Left sensor
@@ -29,6 +29,7 @@
 
 #define STATE 50      // STATE PIN HC05
 #define buzzer_pin 30 // pin for audio buzzer
+#define servo_pin 2 // Pin for servo 
 
 #define FWDpin_FL 9 // FWD Forward left
 #define BWDpin_FL 8 // BWD
@@ -38,7 +39,6 @@
 #define BWDpin_BL 6 // BWD
 #define FWDpin_BR 10 // FWD Backward Right
 #define BWDpin_BR 11 // BWD
-
 
 #define SENSORA_F1 A4   // Sensor ramp forward
 #define SENSORA_F2 A5
@@ -65,6 +65,7 @@ float angle = 18.33;                // Angle of the sensors from the vehicle
 int start_pwm = 100;                      // Base PWM before modifiers. from 0 to 255
 int correction_pwm = 60;
 int startup_sound = 1;              // if 1 = sing if 0 dont sing
+
 
 // --------Defining variables------------
 long travelTime_FL;
@@ -98,12 +99,12 @@ bool cp_variabel = false;
 
 String BTBYTE;  // Received signal string.
 String INBYTE;  // Transmitting signal string.
+String TBYTE;
 String Empty;
 char tempCommand[4];// variable for new string
 String Command;
 
 SoftwareSerial BTSerial(13,12); // RX , TX
-
 // -------------------------Setup-------------------
 void setup()
 {
@@ -129,6 +130,8 @@ void setup()
   BTSerial.begin(9600);
   Serial.println("Ultrasonic Sensor HC-SR04 Test, translation."); // print some text in Serial Monitor
   BTSerial.println("Connected to AGV.");  // Print on bluetooth device.
+
+
 
   // IR sensorernas input.
   pinMode(SENSORA_F1,INPUT);
@@ -183,11 +186,12 @@ void loop()
 //     rotate_delay = -45.1 * pow(z,3) + 77.5 * pow(z,2) - 133 * pow(z,1) + 510;
 
 
-char num1 = 's';
-String num2 = "s";
+//char num1 = 's';
+char ch='/';
 
 if(BTSerial.available())    // Till AGV    
 {
+    Command="";   
     BTBYTE=BTSerial.readString();
     //bygger ny string av BTbyte som inte har det osynliga tecknet
     for (int i = 0; i < 4; ++i){
@@ -199,32 +203,38 @@ if(BTSerial.available())    // Till AGV
     //BTSerial.println(BTBYTE);
     //Serial.print(BTBYTE);           // Skriver ut BTBYTE i Serial (Serialen på arduino:n).
     //Serial.println(BTBYTE);
-    INBYTE=readBluetoothData(Command, start_pwm); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
+    INBYTE=readBluetoothData(Command, start_pwm, servo_pin); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
     
-    Serial.println("DÄR!!!");
+    //String num2=INBYTE[0]+ch;
+    Serial.println("Nytt meddelande.");
+    //INBYTE.insert(1, 1, ch);
     BTSerial.println(INBYTE);     // Send string message to serial.
     
 }
-if (Command == "ssss"){
-  Serial.println("I stop funktion");
+if (Command == "ssss")    // För tom BTBYTE ska AGV stå still. 
+{
+  Serial.println("I stop funktion.");
+  
   delay(4000);
 }
 else{
-  Serial.println(BTBYTE.length());
-  Serial.println(BTBYTE);
-  Serial.println("HÄR!!!");
+  //INBYTE=readBluetoothData(Command, start_pwm, servo_pin); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
+  //Serial.println(BTBYTE.length());
+  //Serial.println(BTBYTE);
+  Serial.println("Inget nytt meddelande.");
   delay(1000); //1 sek = 1'000mm.
 }
 
 if(Serial.available())              // Från AGV
 {   
     INBYTE = Serial.readString();
+    TBYTE=readBluetoothData(INBYTE, start_pwm, servo_pin); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
     //INBYTE=readBluetoothData(BTBYTE);
     //l=BTBYTE.length();              // Längden på BTBYTE.
     //Serial.println("111");          // Test
     //BTSerial.println(BTBYTE);
     //Serial.print(BTBYTE);           // Skriver ut BTBYTE i Serial (Serialen på arduino:n).
-    BTSerial.println(INBYTE);     // Send string message to serial.
+    BTSerial.println(TBYTE);     // Send string message to serial.
 //     // Serial.println(rotate_delay);
 //     // rotate_centered_clkw(start_pwm);
 //     // delay(rotate_delay);
@@ -269,4 +279,5 @@ if(Serial.available())              // Från AGV
 
 }
 }
+
 

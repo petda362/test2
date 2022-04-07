@@ -6,7 +6,7 @@
 
 // ------------Function declaration--------------------------------
 
-String readBluetoothData(String BTBYTE, int PWM);
+String readBluetoothData(String BTBYTE, int PWM, int servo_pin);
 
 String Instructions(char inst, int PWM, String INBYTE);
 
@@ -15,6 +15,8 @@ String Plocka(char inst, int PWM, String INBYTE);
 String Tejpbitar(char inst, int PWM, String INBYTE);
  
 void readIRData();
+
+void Plockat();
 
 
 
