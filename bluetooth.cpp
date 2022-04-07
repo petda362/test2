@@ -160,21 +160,21 @@ String Instructions(char inst, int PWM, String INBYTE)
             
         last_real_distance_FL = real_distance_FL;
         last_real_distance_FR = real_distance_FR;
-        last_real_distance_BL = real_distance_BL;
-        last_real_distance_BR = real_distance_BR;
+        //last_real_distance_BL = real_distance_BL;
+        //last_real_distance_BR = real_distance_BR;
   
         real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
         real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
-        real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
-        real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
+        //real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
+        //real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
         
        /* while((real_distance_FL+real_distance_BL - real_distance_BR+real_distance_FR) < 10){
         rotational_correction(real_distance_FL,real_distance_BL, real_distance_FR, real_distance_BR,tolerance_angle,PWM/3);
         translational_correction(real_distance_FL,real_distance_BL, real_distance_FR, real_distance_BR,tolerance,PWM/3);
         }*/
 
-        if((real_distance_FL+real_distance_FR) > (last_real_distance_FL+last_real_distance_FR) + 200 && ignore == false){
-            delay(310);
+        if((real_distance_FL+real_distance_FR) > (last_real_distance_FL+last_real_distance_FR) + 100 && ignore == false){
+            delay(250);
             break;
         }
         ignore = false;

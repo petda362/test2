@@ -40,22 +40,22 @@
 #define BWDpin_BR 11 // BWD
 
 
-#define SENSORA_F1 A4   // Sensor ramp forward
-#define SENSORA_F2 A5
-#define SENSORA_F3 A6
-#define SENSORA_F4 A7
-#define SENSORA_F5 A0
-#define SENSORA_F6 A1
-#define SENSORA_F7 A2
-#define SENSORA_F8 A3
+#define SENSORA_F1 A0   // Sensor ramp forward
+#define SENSORA_F2 A1
+#define SENSORA_F3 A2
+#define SENSORA_F4 A3
+#define SENSORA_F5 A4
+#define SENSORA_F6 A5
+#define SENSORA_F7 A6
+#define SENSORA_F8 A7
 
 #define SENSORA_B1 A8   // sensor ramp backward
-#define SENSORA_B2 A12
-#define SENSORA_B3 A9
-#define SENSORA_B4 A13
-#define SENSORA_B5 A10
-#define SENSORA_B6 A14
-#define SENSORA_B7 A11
+#define SENSORA_B2 A9
+#define SENSORA_B3 A10
+#define SENSORA_B4 A11
+#define SENSORA_B5 A12
+#define SENSORA_B6 A13
+#define SENSORA_B7 A14
 #define SENSORA_B8 A15
 
 //--------Changeable variables-----------
