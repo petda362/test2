@@ -33,6 +33,15 @@
 #define BWDpin_BR 11 // BWD
 
 
+double last_real_distance_FL;
+double last_real_distance_FR; 
+double last_real_distance_BL;
+double last_real_distance_BR;
+double real_distance_FL;
+double real_distance_FR;
+double real_distance_BL;
+double real_distance_BR;
+
 // --------------------- changeable variables-----------------
 
 bool orth = false;          // bolean that describes if the vehicle is parallell to the walls
@@ -110,5 +119,27 @@ void translational_correction (double dist_FL, double dist_BL, double dist_FR, d
                     (dist_BL > (dist_BR + tolerance))))
   {
     translate_left(PWM);
+  }
+}
+
+void readUltraSensors()
+{
+  real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), 18.33);
+  real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), 18.33);
+  //real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), 18.33);
+  //real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), 18.33);
+}
+
+void stopAtEdge()
+{
+  while (true){
+    translate_FWD(200);
+    readUltraSensors();
+    if((real_distance_FL - last_real_distance_FL > 200) || (real_distance_FR - last_real_distance_FR) > 200){
+            delay(120);
+            translate_stop();
+            break;
+    }
+    delay(10);
   }
 }
