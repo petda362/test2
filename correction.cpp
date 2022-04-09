@@ -10,8 +10,10 @@
 //-------------Libraries---------------
 #include "correction.h"
 #include "movement.h"
+#include <NewPing.h>
 
 //---------Defining pins----------------
+
 #define echopin_FL 40 // Forward Left sensor
 #define trigpin_FL 41
 #define echopin_FR 42 // Forward Right sensor
@@ -20,6 +22,14 @@
 #define trigpin_BL 45
 #define echopin_BR 46 // Back Right
 #define trigpin_BR 47
+
+#define max_distance 25 // maximum ultrasonic sensor distance
+
+NewPing sonarFL(trigpin_FL, echopin_FL, max_distance);
+NewPing sonarFR(trigpin_FR, echopin_FR, max_distance);
+NewPing sonarBL(trigpin_BL, echopin_BL, max_distance);
+NewPing sonarBR(trigpin_BR, echopin_BR, max_distance);
+
 
 #define STATE 50      // STATE PIN HC05
 
@@ -124,22 +134,64 @@ void translational_correction (double dist_FL, double dist_BL, double dist_FR, d
 
 void readUltraSensors()
 {
-  real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), 18.33);
-  real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), 18.33);
-  //real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), 18.33);
-  //real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), 18.33);
+  last_real_distance_FL = real_distance_FL;
+  last_real_distance_FR = real_distance_FR;
+  last_real_distance_BL = real_distance_BL;
+  last_real_distance_BR = real_distance_BR;
+
+  for(int i = 0; i<3; i++)
+  {
+    real_distance_FL += (((sonarFL.ping()) / (US_ROUNDTRIP_CM)) * 10) * sin(DEG_TO_RAD * 18.33);
+    real_distance_FR += (((sonarFR.ping()) / (US_ROUNDTRIP_CM)) * 10) * sin(DEG_TO_RAD * 18.33);
+    real_distance_BL += (((sonarBL.ping()) / (US_ROUNDTRIP_CM)) * 10) * sin(DEG_TO_RAD * 18.33);
+    real_distance_BR += (((sonarBR.ping()) / (US_ROUNDTRIP_CM)) * 10) * sin(DEG_TO_RAD * 18.33);
+    delay(30);
+  }
+  real_distance_FL = real_distance_FL / 3;
+  real_distance_FR = real_distance_FR / 3;
+  real_distance_BL = real_distance_BL / 3;
+  real_distance_BR = real_distance_BR / 3;
+
+  
+
+  /*
+  Serial.print("FL: ");
+  Serial.print(real_distance_FL);
+  Serial.print("\t");
+  Serial.print("FR: ");
+  Serial.print(real_distance_FR);
+  Serial.print("\t");
+  Serial.print("BL: ");
+  Serial.print(real_distance_BL);
+  Serial.print("\t");
+  Serial.print("BR: ");
+  Serial.println(real_distance_BR);
+  */
+
 }
 
 void stopAtEdge()
 {
   while (true){
     translate_FWD(200);
+    delay(250);
     readUltraSensors();
-    if((real_distance_FL - last_real_distance_FL > 200) || (real_distance_FR - last_real_distance_FR) > 200){
-            delay(120);
+    if((last_real_distance_FL - real_distance_FL > 25) || (last_real_distance_FR - real_distance_FR) > 25){
+            delay(180);
             translate_stop();
             break;
     }
     delay(10);
+  }
+}
+
+void stopAtShelf()
+{
+  while(true)
+  {
+    translate_FWD(60);
+    delay(1600);
+    translate_stop();
+    break;
   }
 }

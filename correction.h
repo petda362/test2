@@ -17,5 +17,8 @@ void rotational_correction (double dist_FL, double dist_BL, double dist_FR, doub
 
 void translational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance, int PWM);
 
+void readUltraSensors();
+void stopAtEdge();
+void stopAtShelf();
 
 #endif

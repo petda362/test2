@@ -26,15 +26,6 @@ int tolerance_angle = 20; //tolerance for correction functions
 int tolerance = 3; //tolerance for correction functions
 int pppppp = 1; // used to loop
 
-double last_real_distance_FL;
-double last_real_distance_FR; 
-double last_real_distance_BL;
-double last_real_distance_BR;
-double real_distance_FL;
-double real_distance_FR;
-double real_distance_BL;
-double real_distance_BR;
-
 
 int sensorValue1, sensorValue2, sensorValue3, sensorValue4, sensorValue5, sensorValue6, sensorValue7, sensorValue8;
 int sensorValue9, sensorValue10, sensorValue11, sensorValue12, sensorValue13, sensorValue14, sensorValue15, sensorValue16;
@@ -150,36 +141,7 @@ String Instructions(char inst, int PWM, String INBYTE)
         break;
     
     case 'f':
-    translate_FWD(PWM);
-    delay(800);
-    real_distance_FL = 0;
-    real_distance_FR = 0;
-
-        ignore = true;
-        while (pppppp == 1){
-            
-        last_real_distance_FL = real_distance_FL;
-        last_real_distance_FR = real_distance_FR;
-        //last_real_distance_BL = real_distance_BL;
-        //last_real_distance_BR = real_distance_BR;
-  
-        real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
-        real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
-        //real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
-        //real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
-        
-       /* while((real_distance_FL+real_distance_BL - real_distance_BR+real_distance_FR) < 10){
-        rotational_correction(real_distance_FL,real_distance_BL, real_distance_FR, real_distance_BR,tolerance_angle,PWM/3);
-        translational_correction(real_distance_FL,real_distance_BL, real_distance_FR, real_distance_BR,tolerance,PWM/3);
-        }*/
-
-        if((real_distance_FL+real_distance_FR) > (last_real_distance_FL+last_real_distance_FR) + 100 && ignore == false){
-            delay(250);
-            break;
-        }
-        ignore = false;
-        }
-        translate_stop();
+        stopAtEdge();
         INBYTE[1]='1';  //Klar
     
         break;
@@ -228,6 +190,10 @@ String Instructions(char inst, int PWM, String INBYTE)
          Tapestop(3,PWM);
         INBYTE[1]='1';  //Klar
         break;
+    case 'F':
+    stopAtShelf();
+    break;
+
 
     default:
         // Ogiltig instruktions karaktär.

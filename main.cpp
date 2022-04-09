@@ -91,12 +91,6 @@ int distance_BR;
 double rotate_delay;
 double z;
 
-bool nope = false;
-bool turned = false;
-bool goagain = false;
-bool biggus = false;
-bool cp_variabel = false;
-
 String BTBYTE;  // Received signal string.
 String INBYTE;  // Transmitting signal string.
 String Empty;
@@ -108,6 +102,7 @@ SoftwareSerial BTSerial(13,12); // RX , TX
 // -------------------------Setup-------------------
 void setup()
 {
+  /*
   pinMode(trigpin_FL, OUTPUT);
   pinMode(echopin_FL, INPUT);
   pinMode(trigpin_FR, OUTPUT);
@@ -115,7 +110,7 @@ void setup()
   pinMode(trigpin_BL, OUTPUT);
   pinMode(echopin_BL, INPUT);
   pinMode(trigpin_BR, OUTPUT);
-  pinMode(echopin_BR, INPUT);
+  pinMode(echopin_BR, INPUT);*/
 
   pinMode(FWDpin_FL, OUTPUT);
   pinMode(BWDpin_FL, OUTPUT);
@@ -152,7 +147,7 @@ void setup()
 
   pinMode(buzzer_pin, OUTPUT);
   
-  sing(startup_sound);
+  //sing(startup_sound);
 
 }
 
@@ -182,7 +177,7 @@ void loop()
 //     // rotate_delay = -0.0004*pow(start_pwm, 3) + 0.2537*pow(start_pwm,2) - 53.176*(start_pwm) + 4288.3;
 //     z = (start_pwm - 175) / 47.6;
 //     rotate_delay = -45.1 * pow(z,3) + 77.5 * pow(z,2) - 133 * pow(z,1) + 510;
-
+//readUltraSensors();
 
 if(BTSerial.available())    // Till AGV    
 {
@@ -230,41 +225,6 @@ if(Serial.available())              // Från AGV
 //     // rotate_stop();
 //     // delay(10000);
     
- 
-
- 
-//   if(!nope && !biggus) {translate_FWD(start_pwm);}
-//   if((!biggus && abs(last_real_distance_FL-real_distance_FL) > 200) || (!biggus && abs(last_real_distance_FR-real_distance_FR) > 200 ))
-//   {
-//       delay(300);
-//     translate_stop();
-//     nope = true;
-//     delay(1500);
-//   }
-//     if(!turned && nope && !biggus)
-//   {
-//     rotate_centered_clkw(start_pwm);
-//     delay(rotate_delay);
-//     rotate_stop();
-//     delay(1000);
-//     turned = true;
-//   }
-//   if(!goagain && nope && turned && !biggus)
-//   {
-//     translate_FWD(start_pwm);
-//     delay(2000);
-//     translate_stop();
-        
-//     goagain = true;
-//     biggus = true;
-//     cp_variabel = true;
-//   }
-//   if (cp_variabel) {
-//       rotational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance_angle, correction_pwm);
-
-//       translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance, correction_pwm);
-
-//   }
 
 }
 }
