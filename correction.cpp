@@ -23,7 +23,7 @@
 #define echopin_BR 46 // Back Right
 #define trigpin_BR 47
 
-#define max_distance 25 // maximum ultrasonic sensor distance
+#define max_distance 350 // maximum ultrasonic sensor distance
 
 NewPing sonarFL(trigpin_FL, echopin_FL, max_distance);
 NewPing sonarFR(trigpin_FR, echopin_FR, max_distance);
@@ -51,6 +51,24 @@ double real_distance_FL;
 double real_distance_FR;
 double real_distance_BL;
 double real_distance_BR;
+
+
+//////////////////////////PID///////////////////////////////////
+unsigned long time_last, time_current;
+float time_diff;
+float error, last_error, P, I, D, pid_output;
+
+
+float Kp = 0.6;
+float Ki = 0;
+float Kd = 0;
+
+const float pid_max = 50;
+const float pid_min = -50;
+///////////////////////////////////////////////////////////////
+
+
+
 
 // --------------------- changeable variables-----------------
 
@@ -170,13 +188,41 @@ void readUltraSensors()
 
 }
 
+void calcPID()
+{
+    time_last = time_current;
+    time_current = millis();
+    time_diff = (float)(time_current - time_last)/1000;
+
+    error = real_distance_FL - real_distance_FR;
+    
+    P = error; 
+    I += error*time_diff;
+    D = (error - last_error)/time_diff;
+    
+    pid_output = Kp*P + Ki*I + Kd*D;
+    
+
+    if(pid_output > pid_max){pid_output = pid_max;}
+    if(pid_output < pid_min){pid_output = pid_min;}
+    
+    Serial.print("pid: ");
+    Serial.println(pid_output);
+}
+
+
 void stopAtEdge()
 {
+  bool first_it = true;
   while (true){
     translate_FWD(200);
-    delay(250);
+    if(first_it)
+    {
+      delay(750);
+      first_it = false;
+    }
     readUltraSensors();
-    if((last_real_distance_FL - real_distance_FL > 25) || (last_real_distance_FR - real_distance_FR) > 25){
+    if(((last_real_distance_FL < 100 && last_real_distance_FL > 10) || (last_real_distance_FR < 100 && last_real_distance_FR > 10)) && ((real_distance_FL - last_real_distance_FL > 100) || (real_distance_FR - last_real_distance_FR > 100) || (real_distance_FL == 0) || (real_distance_FR == 0))){
             delay(180);
             translate_stop();
             break;
@@ -187,11 +233,18 @@ void stopAtEdge()
 
 void stopAtShelf()
 {
+    translate_FWD(60);
+    delay(1650);
+    translate_stop();
+}
+
+void centerBetweenShelfs()
+{
   while(true)
   {
-    translate_FWD(60);
-    delay(1600);
-    translate_stop();
-    break;
+    readUltraSensors();
+    rotational_correction(real_distance_FL,real_distance_BL,real_distance_FR,real_distance_BR,16,70);
+    translational_correction(real_distance_FL,real_distance_BL,real_distance_FR,real_distance_BR,6,70);
   }
 }
+
