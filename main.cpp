@@ -6,7 +6,6 @@
 // Henrik Nilsson ED3
 // Konrad Råström ED3
 // Petter Danev ED5
-// Ta bort
 
 //-------------Libraries---------------
 #include <Arduino.h>
