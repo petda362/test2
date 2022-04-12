@@ -7,6 +7,8 @@
 
 #include "audio.h"
 
+
+
 //----------------Declarations-------------
 
 #define NOTE_B0  31
@@ -101,7 +103,7 @@
 
 #define melodyPin 30
 //Bitch lasagna + crab song main theme melody
-int melody[] = {
+int Melody_Lasagna[] = {
 
   
   NOTE_D7, NOTE_AS7, NOTE_G7, NOTE_G7,
@@ -129,7 +131,7 @@ int melody[] = {
 
 };
 //Bitch lasagna + crab song tempo
-int tempo[] = {
+int Tempo_Lasagna[] = {
 
   
   8, 8, 8, 12,
@@ -153,24 +155,158 @@ int tempo[] = {
   
 };
 
+// Music notes of the song, 0 is a rest/pulse
+int Melody_Pirater[] = {
+    NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+    NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+    NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
+    NOTE_A4, NOTE_G4, NOTE_A4, 0,
+
+    NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+    NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+    NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
+    NOTE_A4, NOTE_G4, NOTE_A4, 0,
+
+    NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+    NOTE_A4, NOTE_C5, NOTE_D5, NOTE_D5, 0,
+    NOTE_D5, NOTE_E5, NOTE_F5, NOTE_F5, 0,
+    NOTE_E5, NOTE_D5, NOTE_E5, NOTE_A4, 0,
+
+    NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+    NOTE_D5, NOTE_E5, NOTE_A4, 0,
+    NOTE_A4, NOTE_C5, NOTE_B4, NOTE_B4, 0,
+    NOTE_C5, NOTE_A4, NOTE_B4, 0,
+
+    NOTE_A4, NOTE_A4,
+    //Repeat of first part
+    NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+    NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
+    NOTE_A4, NOTE_G4, NOTE_A4, 0,
+
+    NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+    NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+    NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, 0,
+    NOTE_A4, NOTE_G4, NOTE_A4, 0,
+
+    NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, 0,
+    NOTE_A4, NOTE_C5, NOTE_D5, NOTE_D5, 0,
+    NOTE_D5, NOTE_E5, NOTE_F5, NOTE_F5, 0,
+    NOTE_E5, NOTE_D5, NOTE_E5, NOTE_A4, 0,
+
+    NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, 0,
+    NOTE_D5, NOTE_E5, NOTE_A4, 0,
+    NOTE_A4, NOTE_C5, NOTE_B4, NOTE_B4, 0,
+    NOTE_C5, NOTE_A4, NOTE_B4, 0,
+    //End of Repeat
+
+    NOTE_E5, 0, 0, NOTE_F5, 0, 0,
+    NOTE_E5, NOTE_E5, 0, NOTE_G5, 0, NOTE_E5, NOTE_D5, 0, 0,
+    NOTE_D5, 0, 0, NOTE_C5, 0, 0,
+    NOTE_B4, NOTE_C5, 0, NOTE_B4, 0, NOTE_A4,
+
+    NOTE_E5, 0, 0, NOTE_F5, 0, 0,
+    NOTE_E5, NOTE_E5, 0, NOTE_G5, 0, NOTE_E5, NOTE_D5, 0, 0,
+    NOTE_D5, 0, 0, NOTE_C5, 0, 0,
+    NOTE_B4, NOTE_C5, 0, NOTE_B4, 0, NOTE_A4};
+
+int Tempo_Pirater[] = {
+    125, 125, 250, 125, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 375, 125,
+
+    125, 125, 250, 125, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 375, 125,
+
+    125, 125, 250, 125, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 125, 250, 125,
+
+    125, 125, 250, 125, 125,
+    250, 125, 250, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 375, 375,
+
+    250, 125,
+    //Rpeat of First Part
+    125, 125, 250, 125, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 375, 125,
+
+    125, 125, 250, 125, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 375, 125,
+
+    125, 125, 250, 125, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 125, 250, 125,
+
+    125, 125, 250, 125, 125,
+    250, 125, 250, 125,
+    125, 125, 250, 125, 125,
+    125, 125, 375, 375,
+    //End of Repeat
+
+    250, 125, 375, 250, 125, 375,
+    125, 125, 125, 125, 125, 125, 125, 125, 375,
+    250, 125, 375, 250, 125, 375,
+    125, 125, 125, 125, 125, 500,
+
+    250, 125, 375, 250, 125, 375,
+    125, 125, 125, 125, 125, 125, 125, 125, 375,
+    250, 125, 375, 250, 125, 375,
+    125, 125, 125, 125, 125, 500};
 
 //-----------------functions------------------
 
-int song = 0;
+//song variables
+int Melody[200];
+int Tempo[200];
+int size;
+int noteDuration;
 
 void sing(int s) {
-  // iterate over the notes of the melody:
-  song = s;
-  if (song == 1) {
-    int size = sizeof(melody) / sizeof(int);
+  
+  // make requested song
+  switch(s){
+    case 0: Melody[0] = 0;
+    Tempo[0] = 0;
+    size = 0;
+
+    case 1: for(unsigned i = 0; i < sizeof(Melody_Lasagna); ++i){
+    Melody[i] = Melody_Lasagna[i];
+    Tempo[i] = Tempo_Lasagna[i];
+    
+    }
+    size = sizeof(Melody_Lasagna);// / sizeof(int);
+
+    case 2: for(unsigned i =0; i < sizeof(Melody_Pirater); ++i){
+    Melody[i] = Melody_Pirater[i];
+    Tempo[i] = Tempo_Pirater[i];
+    }
+    size = sizeof(Melody_Pirater);// / sizeof(int);
+    
+    }
+    
+    // iterate over the notes of the melody:
     for (int thisNote = 0; thisNote < size; thisNote++) {
 
       // to calculate the note duration, take one second
       // divided by the note type.
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
-      int noteDuration = 1000 / tempo[thisNote];
+      if (s == 2){
+        int noteDuration = Tempo[thisNote];
+      }
+      else{
+        int noteDuration = 1000 / Tempo[thisNote];
+      }
 
-      buzz(melodyPin, melody[thisNote], noteDuration);
+      buzz(melodyPin, Melody[thisNote], noteDuration);
 
       // to distinguish the notes, set a minimum time between them.
       // the note's duration + 30% seems to work well:
@@ -182,7 +318,7 @@ void sing(int s) {
     }
 
   } 
-  }
+  
 
 
 void buzz(int targetPin, long frequency, long length) {

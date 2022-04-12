@@ -65,7 +65,7 @@ int tolerance_angle = 20;           // Allowed error before the rotational corre
 float angle = 18.33;                // Angle of the sensors from the vehicle
 int start_pwm = 100;                      // Base PWM before modifiers. from 0 to 255
 int correction_pwm = 60;
-int startup_sound = 1;              // if 1 = sing if 0 dont sing
+int startup_sound = 2;              // if 0 sing nothing, else pick a song from audio.cpp
 
 // --------Defining variables------------
 long travelTime_FL;
