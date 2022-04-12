@@ -22,6 +22,7 @@
 #define trigpin_BR 47
 
 #define STATE 50      // STATE PIN HC05
+#define buzzer_pin 30 // pin for audio buzzer
 
 #define FWDpin_FL 9 // FWD Forward left
 #define BWDpin_FL 8 // BWD
@@ -31,6 +32,7 @@
 #define BWDpin_BL 6 // BWD
 #define FWDpin_BR 10 // FWD Backward Right
 #define BWDpin_BR 11 // BWD
+
 
 
 // --------------------- changeable variables-----------------

@@ -3,6 +3,8 @@
 #include <Arduino.h>
 #include <math.h>
 
+
+
 void diagonal_FW_right(int PWM);                         // Vehicle translates diagonally forward to the right
 
 void diagonal_FW_left(int PWM);                          // Vehicle translates diagonally forward to the right
@@ -11,9 +13,9 @@ void translate_right(int PWM);                           // vehicle translates t
 
 void translate_left(int PWM);                            // Vehicle translates to the left
 
-void translate_stop();                            // Set all pwm signals to 0, stop all motors
+void translate_stop();                                   // Set all pwm signals to 0, stop all motors
 
-void rotate_stop();                               // Currently same as translate_stop ^
+void rotate_stop();                                      // Currently same as translate_stop ^
 
 void translate_FWD(int PWM);                             // Vehicle drives forwards
 
