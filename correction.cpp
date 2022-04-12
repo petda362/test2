@@ -49,23 +49,16 @@ int ultraSensor(int trig, int echo)
 {
   long travelTime;
   float distance;
-  float sum_distances = 0;
-  float avg_distance;
-  int num_measurements = 5;
-  
-  for (int i = 0; i <= num_measurements; i = i + 1) {
-    clear_pin(trig);
-    delayMicroseconds(2);
-    digitalWrite(trig, HIGH);
-    delayMicroseconds(10);
-    clear_pin(trig);
-    travelTime = pulseIn(echo, HIGH);
-    distance = (travelTime / 2) / 29.1 * 10; // distance in mm
-    sum_distances = sum_distances + distance;
-  }
-  avg_distance = sum_distances / num_measurements;
-  return avg_distance;
+  clear_pin(trig);
+  delayMicroseconds(2);
+  digitalWrite(trig, HIGH);
+  delayMicroseconds(10);
+  clear_pin(trig);
+  travelTime = pulseIn(echo, HIGH);
+  distance = (travelTime / 2) / 29.1 * 10; // distance in mm
+  return distance;
 }
+
 
 int real_distance(float distance, float angle)
 {
