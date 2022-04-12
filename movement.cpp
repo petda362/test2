@@ -1,6 +1,11 @@
 // Projectgroup 1
 // Bachelors-project in Electronics Design engineering
+// 2022
+
 // Alexander Riex ED4
+// Henrik Nilsson ED3
+// Konrad Råström ED3
+// Petter Danev ED5
 
 //-------------Libraries---------------
 #include "movement.h"
@@ -18,12 +23,12 @@
 
 #define STATE 50      // STATE PIN HC05
 
-#define FWDpin_FL 8 // FWD Forward left
-#define BWDpin_FL 9 // BWD
+#define FWDpin_FL 9 // FWD Forward left
+#define BWDpin_FL 8 // BWD
 #define FWDpin_FR 4 // FWD Forward Right
 #define BWDpin_FR 5 // BWD
-#define FWDpin_BL 6 // FWD Backward LefB
-#define BWDpin_BL 7 // BWD
+#define FWDpin_BL 7 // FWD Backward LefB
+#define BWDpin_BL 6 // BWD
 #define FWDpin_BR 10 // FWD Backward Right
 #define BWDpin_BR 11 // BWD
 

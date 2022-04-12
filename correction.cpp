@@ -1,5 +1,12 @@
-// test 3
-// ggggggggggg
+// Projectgroup 1
+// Bachelors-project in Electronics Design engineering
+// 2022
+
+// Alexander Riex ED4
+// Henrik Nilsson ED3
+// Konrad Råström ED3
+// Petter Danev ED5
+
 //-------------Libraries---------------
 #include <Arduino.h>
 #include <math.h>
@@ -96,6 +103,7 @@ int ultraSensor(int trig, int echo)
   distance = (travelTime / 2) / 29.1 * 10; // distance in mm
   return distance;
 }
+
 
 int real_distance(float distance, float angle)
 {

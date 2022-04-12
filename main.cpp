@@ -7,12 +7,16 @@
 // Konrad Råström ED3
 // Petter Danev ED5
 
+// Main branch
+//------------
+
 //-------------Libraries---------------
 #include <Arduino.h>
 #include <math.h>
 #include "correction.h"
 #include "SoftwareSerial.h"
 #include "movement.h"
+#include "audio.h"
 
 //---------Defining pins----------------
 #define echopin_FL 40 // Forward Left sensor
@@ -25,13 +29,14 @@
 #define trigpin_BR 47
 
 #define STATE 50      // STATE PIN HC05
+#define buzzer_pin 30 // pin for audio buzzer
 
-#define FWDpin_FL 8 // FWD Forward left
-#define BWDpin_FL 9 // BWD
+#define FWDpin_FL 9 // FWD Forward left
+#define BWDpin_FL 8 // BWD
 #define FWDpin_FR 4 // FWD Forward Right
 #define BWDpin_FR 5 // BWD
-#define FWDpin_BL 6 // FWD Backward LefB
-#define BWDpin_BL 7 // BWD
+#define FWDpin_BL 7 // FWD Backward LefB
+#define BWDpin_BL 6 // BWD
 #define FWDpin_BR 10 // FWD Backward Right
 #define BWDpin_BR 11 // BWD
 
@@ -60,6 +65,7 @@ int tolerance_angle = 20;           // Allowed error before the rotational corre
 float angle = 18.33;                // Angle of the sensors from the vehicle
 int start_pwm = 100;                      // Base PWM before modifiers. from 0 to 255
 int correction_pwm = 60;
+int startup_sound = 1;              // if 1 = sing if 0 dont sing
 
 // --------Defining variables------------
 long travelTime_FL;
@@ -131,8 +137,13 @@ void setup()
   pinMode(SENSORA_B7,INPUT);
   pinMode(SENSORA_B8,INPUT);
 
+  pinMode(buzzer_pin, OUTPUT);
   Serial.begin(9600);                                            // // Serial Communication is starting with 9600 of baudrate speed
   Serial.println("Ultrasonic Sensor HC-SR04 Test, translation"); // print some text in Serial Monitor
+
+  
+  sing(startup_sound);
+
 }
 
 //-----------Main loop-------------------------------------
@@ -150,14 +161,18 @@ void loop()
 
   last_real_distance_FL = real_distance_FL;
   last_real_distance_FR = real_distance_FR;
-  last_real_distance_BL = real_distance_BL;
-  last_real_distance_BR = real_distance_BR;
+  //last_real_distance_BL = real_distance_BL;
+  //last_real_distance_BR = real_distance_BR;
   
   real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
   real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
-  real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
-  real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
-  
+  //real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
+  //real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
+
+   Serial.println(real_distance_FL) ;
+   Serial.println(real_distance_FR) ;
+   //Serial.println(real_distance_BL) ;
+   //Serial.println(real_distance_BR) ;
     // rotate_delay = -0.0004*pow(start_pwm, 3) + 0.2537*pow(start_pwm,2) - 53.176*(start_pwm) + 4288.3;
     z = (start_pwm - 175) / 47.6;
     rotate_delay = -45.1 * pow(z,3) + 77.5 * pow(z,2) - 133 * pow(z,1) + 510;
@@ -198,9 +213,9 @@ void loop()
     cp_variabel = true;
   }
   if (cp_variabel) {
-      rotational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance_angle, correction_pwm);
+  //     rotational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance_angle, correction_pwm);
 
-      translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance, correction_pwm);
+  //     translational_correction(real_distance_FL, real_distance_BL, real_distance_FR, real_distance_BR, tolerance, correction_pwm);
 
   }
 
