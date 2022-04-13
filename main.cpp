@@ -9,10 +9,10 @@
 
 //-------------Libraries---------------
 #include <Arduino.h>
+#include "SoftwareSerial.h"
 #include <math.h>
 #include "correction.h"
 #include "bluetooth.h"
-#include "SoftwareSerial.h"
 #include "movement.h"
 #include "audio.h"
 

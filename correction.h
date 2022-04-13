@@ -12,10 +12,10 @@ int ultraSensor(int trig, int echo);              // Perform measurements with t
 
 int real_distance(float distance, float angle);   // Convert the distance recieved from sensor into orthogonal distance based on angle (trigonometry)
 
+void rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance, int PWM);  // Performs rotational correction, but needs to be inside a loop to work
 
-void rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance, int PWM);
+void translational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance, int PWM); // performs translational correction, need to be in a loop to work
 
-void translational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance, int PWM);
-
+void total_correction(int tolerance_angle, int tolerance, int PWM, float angle); // Performs total correction and does not stop until complete
 
 #endif

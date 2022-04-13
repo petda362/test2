@@ -37,7 +37,7 @@
 
 // --------------------- variables-------------
 bool orth = false;
-
+bool centered = false;
 
 // ------------Functions------------------
 void clear_pin(int x)
@@ -93,6 +93,7 @@ void translational_correction (double dist_FL, double dist_BL, double dist_FR, d
                (dist_FL <= (dist_FR + tolerance))))
   {
     translate_stop();
+    centered = true;
   
   }
   else if (orth && ((dist_FL < (dist_FR - tolerance)) || 
@@ -105,5 +106,21 @@ void translational_correction (double dist_FL, double dist_BL, double dist_FR, d
   {
     translate_left(PWM);
   }
+}
+
+void total_correction(int tolerance_angle, int tolerance, int PWM, float angle) {
+  double dist_FL;
+  double dist_FR;
+  double dist_BL;
+  double dist_BR;
+  while(!centered) {
+    dist_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
+    dist_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
+    dist_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
+    dist_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
+    rotational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance_angle, PWM);
+    translational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance, PWM);
+  }
+  centered = false;
 }
 

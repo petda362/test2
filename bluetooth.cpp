@@ -43,7 +43,7 @@ int sensorValue9, sensorValue10, sensorValue11, sensorValue12, sensorValue13, se
 // --------------------- changeable variables-----------------
 
 int PWM_3 = 60; // PWM för zon 3. Måste kalibreras!
-
+bool corrected = false;
 
 
 
@@ -160,13 +160,13 @@ String Instructions(char inst, int PWM, String INBYTE)
             
         last_real_distance_FL = real_distance_FL;
         last_real_distance_FR = real_distance_FR;
-        //last_real_distance_BL = real_distance_BL;
-        //last_real_distance_BR = real_distance_BR;
+        last_real_distance_BL = real_distance_BL;
+        last_real_distance_BR = real_distance_BR;
   
         real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
         real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
-        //real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
-        //real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
+        real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
+        real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
         
        /* while((real_distance_FL+real_distance_BL - real_distance_BR+real_distance_FR) < 10){
         rotational_correction(real_distance_FL,real_distance_BL, real_distance_FR, real_distance_BR,tolerance_angle,PWM/3);
@@ -225,9 +225,14 @@ String Instructions(char inst, int PWM, String INBYTE)
         break;
 
     case 'z': 
-         Tapestop(3,PWM);
+        Tapestop(3,PWM);
         INBYTE[1]='1';  //Klar
         break;
+
+    case 'C':
+        total_correction(tolerance_angle, tolerance, PWM, angle);
+        break;
+        
 
     default:
         // Ogiltig instruktions karaktär.
