@@ -1,3 +1,12 @@
+// Projectgroup 1
+// Bachelors-project in Electronics Design engineering
+// 2022
+
+// Alexander Riex ED4
+// Henrik Nilsson ED3
+// Konrad Råström ED3
+// Petter Danev ED5
+
 #ifndef correction_h
 #define correction_h
 #include <Arduino.h>

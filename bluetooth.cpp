@@ -1,3 +1,11 @@
+// Projectgroup 1
+// Bachelors-project in Electronics Design engineering
+// 2022
+
+// Alexander Riex ED4
+// Henrik Nilsson ED3
+// Konrad Råström ED3
+// Petter Danev ED5
 //---------------------------------Libraries--------------------------
 #include <Arduino.h>
 #include <math.h>
