@@ -42,7 +42,7 @@ int sensorValue9, sensorValue10, sensorValue11, sensorValue12, sensorValue13, se
 
 // --------------------- changeable variables-----------------
 
-int PWM_3 = 60; // PWM för zon 3. Måste kalibreras!
+int PWM_3 = 70; // PWM för zon 3. Måste kalibreras!
 bool corrected = false;
 
 
@@ -207,6 +207,11 @@ String Instructions(char inst, int PWM, String INBYTE)
         INBYTE[1]='1';       
         break;
     
+    case 'p':
+    sing(3);
+    INBYTE[1] = '1';
+    break;
+
     case 'v':
         rotate_centered_cclkw(PWM);
         delay(630);
@@ -230,7 +235,8 @@ String Instructions(char inst, int PWM, String INBYTE)
         break;
 
     case 'C':
-        total_correction(tolerance_angle, tolerance, PWM, angle);
+        total_correction(tolerance_angle, tolerance, PWM_3, angle);
+        INBYTE[1] = '1'; //Klar
         break;
         
 
