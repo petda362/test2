@@ -30,8 +30,8 @@ int Tape = 0;
 // sensor variables 
 
 float angle = 18.33;
-int tolerance_angle = 20; //tolerance for correction functions
-int tolerance = 3; //tolerance for correction functions
+int tolerance_angle = 6; //tolerance for correction functions
+int tolerance = 1; //tolerance for correction functions
 int pppppp = 1; // used to loop
 
 double last_real_distance_FL;
