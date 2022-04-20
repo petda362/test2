@@ -263,60 +263,110 @@ int Tempo_Pirater[] = {
     250, 125, 375, 250, 125, 375,
     125, 125, 125, 125, 125, 500};
 
+
+int melody_Communism[] = {
+  NOTE_G4, NOTE_C5, NOTE_G4, NOTE_A4, NOTE_B4, NOTE_E4, NOTE_E4, 
+  NOTE_A4, NOTE_G4, NOTE_F4, NOTE_G4, NOTE_C4, NOTE_C4, 
+  NOTE_D4, NOTE_D4, NOTE_E4, NOTE_F4, NOTE_F4, NOTE_G4, NOTE_A4, NOTE_B4, NOTE_C5, NOTE_D5, 
+  NOTE_E5, NOTE_D5, NOTE_C5, NOTE_D5, NOTE_B4, NOTE_G4, 
+  NOTE_C5, NOTE_B4, NOTE_A4, NOTE_B4, NOTE_E4, NOTE_E4, 
+  NOTE_A4, NOTE_G4, NOTE_F4, NOTE_G4, NOTE_C4, NOTE_C4, 
+  NOTE_C5, NOTE_B4, NOTE_A4, NOTE_G4, NOTE_B4, NOTE_C5, NOTE_D5, 
+  NOTE_E5, NOTE_D5, NOTE_C5, NOTE_B4, NOTE_C5, NOTE_D5, NOTE_G4, NOTE_G4, NOTE_B4, NOTE_C5, NOTE_D5,
+  NOTE_C5, NOTE_B4, NOTE_A4, NOTE_G4, NOTE_A4, NOTE_B4, NOTE_E4, NOTE_E4, NOTE_G4, NOTE_A4, NOTE_B4,
+  NOTE_C5, NOTE_A4, NOTE_B4, NOTE_C5, NOTE_A4, NOTE_B4, NOTE_C5, NOTE_A4, NOTE_C5, NOTE_F5,
+  NOTE_F5, NOTE_E5, NOTE_D5, NOTE_C5, NOTE_D5, NOTE_E5, NOTE_C5, NOTE_C5,
+  NOTE_D5, NOTE_C5, NOTE_B4, NOTE_A4, NOTE_B4, NOTE_C5, NOTE_A4, NOTE_A4,
+  NOTE_C5, NOTE_B4, NOTE_A4, NOTE_G4, NOTE_C4, NOTE_G4, NOTE_A4, NOTE_B4, NOTE_C5
+};
+
+int Tempo_Communism[] = {
+  8, 4, 6, 16, 4, 8, 8, 
+  4, 6, 16, 4, 8, 8, 
+  4, 8, 8, 4, 8, 8, 4, 8, 8, 2,
+  4, 6, 16, 4, 8, 8, 
+  4, 6, 16, 4, 8, 8, 
+  4, 6, 16, 4, 6, 16, 
+  4, 6, 16, 8, 8, 8, 8, 
+  2, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8,
+  2, 8, 8, 8, 8, 3, 8, 8, 8, 8, 8,
+  4, 6, 16, 4, 6, 16, 4, 8, 8, 2,
+  2, 8, 8, 8, 8, 3, 8, 2,
+  2, 8, 8, 8, 8, 3, 8, 2,
+  4, 6, 16, 4, 4, 2, 4, 4, 1
+};
+
+
 //-----------------functions------------------
 
 //song variables
-int Melody[200];
-int Tempo[200];
-int size;
+int Melody[250] = {1};
+int Tempo[250] = {1};
+int size = 1;
 int noteDuration;
 
 void sing(int s) {
   
-  // // make requested song
-  // switch(s){
-  //   case 0: Melody[0] = 0;
-  //   Tempo[0] = 0;
-  //   size = 0;
+   //make requested song
+  switch(s){
+    case 0: Melody[0] = 1;
+    Tempo[0] = 1;
+    size = 1;
+    break;
 
-  //   case 1: for(unsigned i = 0; i < sizeof(Melody_Lasagna); ++i){
-  //   Melody[i] = Melody_Lasagna[i];
-  //   Tempo[i] = Tempo_Lasagna[i];
+    case 1: for(unsigned i = 0; i < 5; ++i){
+    Melody[i] = Melody_Lasagna[i];
+    Tempo[i] = Tempo_Lasagna[i];
+    }
+    Melody[6] = 1;
+    size = sizeof(Melody_Lasagna);// / sizeof(int);
+    break;
+
+    case 2: for(unsigned i =0; i < 203; ++i){
+    Melody[i] = Melody_Pirater[i];
+    Tempo[i] = Tempo_Pirater[i];
+    }
+    Melody[204] = 1;
+    size = sizeof(Melody_Pirater);// / sizeof(int);
+    break;
+
+    case 3: for (unsigned i =0; i < 106; ++i){
+      Melody[i] = melody_Communism[i];
+    Tempo[i] = Tempo_Communism[i];
+    }
+    Melody[107] = 1;
+    size = sizeof(melody_Communism);// / sizeof(int);
+    break;
+
+    }
     
-  //   }
-  //   size = sizeof(Melody_Lasagna);// / sizeof(int);
+    // iterate over the notes of the melody:
+    for (int thisNote = 0; thisNote < size; thisNote++) {
+      if (Melody[thisNote] == 1) break;
 
-  //   case 2: for(unsigned i =0; i < sizeof(Melody_Pirater); ++i){
-  //   Melody[i] = Melody_Pirater[i];
-  //   Tempo[i] = Tempo_Pirater[i];
-  //   }
-  //   size = sizeof(Melody_Pirater);// / sizeof(int);
-    
-  //   }
-    
-  //   // iterate over the notes of the melody:
-  //   for (int thisNote = 0; thisNote < size; thisNote++) {
+      // to calculate the note duration, take one second
+      // divided by the note type.
+      //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+      if (s == 2){
+        noteDuration = Tempo[thisNote];
+      }
+      else{
+        if (Tempo[thisNote]==0){
+          break;
+        }
+        noteDuration = 1000 / Tempo[thisNote];
+      }
 
-  //     // to calculate the note duration, take one second
-  //     // divided by the note type.
-  //     //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
-  //     if (s == 2){
-  //       int noteDuration = Tempo[thisNote];
-  //     }
-  //     else{
-  //       int noteDuration = 1000 / Tempo[thisNote];
-  //     }
+      buzz(melodyPin, Melody[thisNote], noteDuration);
 
-  //     buzz(melodyPin, Melody[thisNote], noteDuration);
+      // to distinguish the notes, set a minimum time between them.
+      // the note's duration + 30% seems to work well:
+      int pauseBetweenNotes = noteDuration * 1.3;
+      delay(pauseBetweenNotes);
 
-  //     // to distinguish the notes, set a minimum time between them.
-  //     // the note's duration + 30% seems to work well:
-  //     int pauseBetweenNotes = noteDuration * 1.30;
-  //     delay(pauseBetweenNotes);
-
-  //     // stop the tone playing:
-  //     buzz(melodyPin, 0, noteDuration);
-  //   }
+      // stop the tone playing:
+      buzz(melodyPin, 0, noteDuration);
+    }
 
   } 
   
