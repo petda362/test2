@@ -17,23 +17,23 @@
 #include "audio.h"
 
 // --------Defining variables------------
-char State1;
-char Zone;
-char Instruction;
-char Ack;
-char direction;
-int i = 0;
-bool ignore = true;
-int Tape = 0;
+//char State1;
+//char Zone;
+//char Instruction;
+//char Ack;
+//char direction;
+//int i = 0;
+//bool ignore = true;
+//int Tape = 0;
 
 
 // sensor variables 
 
-float angle = 18.33;
-int tolerance_angle = 6; //tolerance for correction functions
-int tolerance = 1; //tolerance for correction functions
-int pppppp = 1; // used to loop
+//float angle = 18.33;
+//int tolerance_angle = 6; //tolerance for correction functions
+//int tolerance = 1; //tolerance for correction functions
 
+/*
 double last_real_distance_FL;
 double last_real_distance_FR; 
 double last_real_distance_BL;
@@ -46,12 +46,12 @@ double real_distance_BR;
 
 int sensorValue1, sensorValue2, sensorValue3, sensorValue4, sensorValue5, sensorValue6, sensorValue7, sensorValue8;
 int sensorValue9, sensorValue10, sensorValue11, sensorValue12, sensorValue13, sensorValue14, sensorValue15, sensorValue16;
-
+*/
 
 // --------------------- changeable variables-----------------
 
-int PWM_3 = 70; // PWM för zon 3. Måste kalibreras!
-bool corrected = false;
+//int PWM_3 = 70; // PWM för zon 3. Måste kalibreras!
+//bool corrected = false;
 
 
 
@@ -86,176 +86,13 @@ bool corrected = false;
 
 
 
-#define servo_pin 2
+//#define servo_pin 2
 
-Servo myservo;
+//Servo plockservo;
 
 // ------------------------------- function ---------------------------
 
-String readBluetoothData(String BTBYTE, int PWM, bool plock)    // PWM för zon 1 och 2.
-{
-    myservo.attach(servo_pin);
-
-    if (plock == false){
-        Plockat();   
-        plock = true;
-    }
-    
-    String INBYTE="000";  // Return string.
-    // Dela upp BTBYTE meddelanden (*/*/*/*).
-    INBYTE[0]=BTBYTE[0];    // Ack.
-    State1=BTBYTE[1];       // Auto eller manuell.
-    Zone=BTBYTE[2];         // Vilken zon.
-    Instruction=BTBYTE[3];  // Instruktion.
-  
-
-    //direction=BTBYTE[0];
-    //Serial.println("TEST");
-    
-    switch (State1) // Ta bort???
-    {
-    case '0':   // Manuell
-    case '1':   // Automatisk
-            switch (Zone)
-            {
-                case '1':   // Zone 1
-                        INBYTE=Instructions(Instruction, PWM, INBYTE);
-                        //return "In zone 1";
-                    break;
-    
-                case '2':   // Zone 2
-                        INBYTE=Instructions(Instruction, PWM, INBYTE);
-                        // if IR-sensor har hittat linje return INBYTE[2]=p
-                        //return "In zone 2";
-                    break;
-        
-                case '3':   // Zone 3
-                        INBYTE=Instructions(Instruction, PWM_3, INBYTE);
-                        //return "In zone 3";
-                    break;
-
-                default:    // Ingen zone.
-                    INBYTE[2]='f';    //
-                    break;
-            }
-        break;
-        
-    default:
-        break;
-    }
-    return INBYTE;
-}
-
-String Instructions(char inst, int PWM, String INBYTE)
-{
-
-    switch (inst)
-    {
-    case 's':
-        translate_stop();
-        rotate_stop();
-        INBYTE[1]='1';  //Klar
-        break;
-    
-    case 'f':
-    translate_FWD(PWM);
-    delay(800);
-    real_distance_FL = 0;
-    real_distance_FR = 0;
-
-        ignore = true;
-        while (pppppp == 1){
-            
-        last_real_distance_FL = real_distance_FL;
-        last_real_distance_FR = real_distance_FR;
-        last_real_distance_BL = real_distance_BL;
-        last_real_distance_BR = real_distance_BR;
-  
-        real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
-        real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
-        real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
-        real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
-        
-       /* while((real_distance_FL+real_distance_BL - real_distance_BR+real_distance_FR) < 10){
-        rotational_correction(real_distance_FL,real_distance_BL, real_distance_FR, real_distance_BR,tolerance_angle,PWM/3);
-        translational_correction(real_distance_FL,real_distance_BL, real_distance_FR, real_distance_BR,tolerance,PWM/3);
-        }*/
-
-        if((real_distance_FL+real_distance_FR) > (last_real_distance_FL+last_real_distance_FR) + 100 && ignore == false){
-            delay(250);
-            break;
-        }
-        ignore = false;
-        }
-        translate_stop();
-        INBYTE[1]='1';  //Klar
-    
-        break;
-    
-    case 'b':
-        translate_BWD(PWM);
-        delay(250);
-        INBYTE[1]='1';  //Klar
-        break;
-
-    case 'l':
-    break;
-
-    case 'm': 
-    Plockat();
-    sing(1);
-    INBYTE[2]='u';  // Plockning utförd
-    INBYTE[1]='1';  // Klar
-    break;
-
-    case 'h':
-        rotate_centered_clkw(PWM);
-        delay(630);
-        rotate_stop();
-        INBYTE[1]='1';       
-        break;
-    
-    case 'p':
-    sing(3);
-    INBYTE[1] = '1';
-    break;
-
-    case 'v':
-        rotate_centered_cclkw(PWM);
-        delay(630);
-        rotate_stop();
-        INBYTE[1]='1';       
-        break;
-
-    case 'x': 
-         Tapestop(1,PWM);
-        INBYTE[1]='1';  //Klar
-        break;
-
-    case 'y': 
-        Tapestop(2,PWM);
-        INBYTE[1]='1';  //Klar
-        break;
-
-    case 'z': 
-        Tapestop(3,PWM);
-        INBYTE[1]='1';  //Klar
-        break;
-
-    case 'C':
-        total_correction(tolerance_angle, tolerance, PWM_3, angle);
-        INBYTE[1] = '1'; //Klar
-        break;
-        
-
-    default:
-        // Ogiltig instruktions karaktär.
-        INBYTE[2] = 'f';
-        break;
-    }
-    return INBYTE;
-}
-
+/*
 String Plocka(char inst, int PWM, String INBYTE)
 {
     int time=1000;  //1000ms=1s
@@ -300,9 +137,12 @@ default:
     break;
 }
 
+
 return INBYTE;
 }
+*/
 
+/*
 String Tejpbitar(char inst, int PWM, String INBYTE)
 {
     // Loopa hela funktionen tills man hittar rätt antal tejpbitar.
@@ -353,7 +193,8 @@ String Tejpbitar(char inst, int PWM, String INBYTE)
     }    
 return INBYTE;
 }
-
+*/
+/*
 void readIRData()
 {
    sensorValue1 = analogRead(SENSORA_F1);
@@ -377,34 +218,9 @@ void readIRData()
 //int calc2 = (sensorValue9 + sensorValue10 + sensorValue15 + sensorValue16);
   // Serial.println(calc1 , "    ", calc2);
 }
+*/
 
-void Plockat() // funktion för att plocka klossen från hyllan
-{
-    for(int pos=0; pos <= 120; pos+=10){
-        myservo.write(pos);
-        delay(15);
-    }
-delay(300);
-myservo.write(0);
-}
 
-void Tapestop(int nr, int PWM) // funktion för att stanna vid tejp nr
-{
-Tape = 0;
-        translate_FWD(PWM);
-        while(Tape < nr){
-            readIRData();
-            if (((sensorValue9+sensorValue10+sensorValue15+sensorValue16+400) / 4) < ((sensorValue1+sensorValue2+sensorValue7+sensorValue8) / 4)){
-                Tape = Tape + 1;
-                if (Tape == nr){
-                    delay(220);
-                    quickbrake(PWM);
-                }
-                delay(100);
-            }
-     
-        }
-        translate_stop();
-}
+
 
 

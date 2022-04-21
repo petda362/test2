@@ -330,7 +330,7 @@ void sing(int s) {
     size = sizeof(Melody_Pirater);// / sizeof(int);
     break;
 
-    case 3: for (unsigned i =0; i < 106; ++i){
+    case 3: for (unsigned i =0; i < 105; ++i){
       Melody[i] = melody_Communism[i];
     Tempo[i] = Tempo_Communism[i];
     }

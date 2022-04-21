@@ -6,7 +6,7 @@
 
 // ------------Function declaration--------------------------------
 
-String readBluetoothData(String BTBYTE, int PWM, bool plock);
+/*String readBluetoothData(String BTBYTE, int PWM, bool plock);
 
 String Instructions(char inst, int PWM, String INBYTE);
 
@@ -19,7 +19,7 @@ void readIRData();
 void Plockat();
 
 void Tapestop(int nr, int PWM);
-
+*/
 
 
 
