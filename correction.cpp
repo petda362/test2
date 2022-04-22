@@ -51,7 +51,7 @@ int ultraSensor(int trig, int echo)
   float distance;
   float sum_distances = 0;
   float avg_distance;
-  int num_measurements = 3;
+  int num_measurements = 1;//--------------------------------------------
   
   for (int i = 0; i < num_measurements; i = i + 1) {
     clear_pin(trig);
@@ -76,6 +76,7 @@ int real_distance(float distance, float angle)
 
 
 void rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance_angle, int PWM) {
+   
     if ((dist_BL < (dist_FL - tolerance_angle)) ||
            (dist_FR < (dist_BR - tolerance_angle)))
   {
@@ -126,9 +127,23 @@ void total_correction(int tolerance_angle, int tolerance, int PWM, float angle) 
     dist_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
     dist_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
     dist_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
-    rotational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance_angle, PWM);
-    translational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance, PWM);
+    /*
+    Serial.println(dist_FL);
+    Serial.print(dist_FR);
+    Serial.print(dist_BL);
+    Serial.print(dist_BR);
+    */
+   if (orth == false){
+    rotational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance_angle, PWM-3);
+   }
+   else if (centered == false){ 
+    translational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance, PWM-3);
+    if(centered){
+    orth = false;
+    }
+   }
   }
+  orth = false;
   centered = false;
 }
 

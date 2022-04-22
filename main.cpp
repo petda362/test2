@@ -64,12 +64,12 @@ Servo plockservo;
 
 
 //--------Changeable variables-----------
-int tolerance = 3;                 // Allowed error before the translation corection algorithm is implemented
-int tolerance_angle = 20;           // Allowed error before the rotational correction algoritm is implemented
+int tolerance = 2;                 // Allowed error before the translation correction algorithm is implemented
+int tolerance_angle = 2;           // Allowed error before the rotational correction algoritm is implemented
 float angle = 18.33;                // Angle of the sensors from the vehicle
 int start_pwm = 200;                      // Base PWM before modifiers. from 0 to 255
 int correction_pwm = 60;
-int startup_sound = 1;              // if 1 = sing if 0 dont sing
+int startup_sound = 0;              // if 1 = sing if 0 dont sing
 bool plock = false;
 int PWM_3 = 70; // PWM för zon 3. Måste kalibreras!
 bool corrected = false;
@@ -110,7 +110,7 @@ bool biggus = false;
 bool cp_variabel = false;
 
 String BTBYTE;  // Received signal string.
-String INBYTE;  // Transmitting signal string.
+
 String Empty;
 char tempCommand[4];// variable for new string
 String Command;
@@ -125,6 +125,11 @@ char direction;
 //int i = 0;
 bool ignore = true;
 int Tape = 0;
+bool L_lost;
+bool R_lost;
+bool read_error;
+char last_inst;
+char last_Zone;
 
 // -------------------------Setup-------------------
 void setup()
@@ -177,7 +182,7 @@ void setup()
 
 }
 
-// ----------Funktioner------------------------------------
+// ----------Functions------------------------------------
 
 void readIRData()
 {
@@ -201,7 +206,6 @@ void readIRData()
 
 }
 
-
 void Plockat() // funktion för att plocka klossen från hyllan
 {
     for(int pos=0; pos <= 120; pos+=10){
@@ -212,7 +216,7 @@ delay(300);
 plockservo.write(0);
 }
 
-void Tapestop(int nr, int PWM) // funktion för att stanna vid tejp nr
+String Tapestop(int nr, int PWM,String outmes) // funktion för att stanna vid tejp nr
 {
 Tape = 0;
         translate_FWD(PWM);
@@ -223,7 +227,7 @@ Tape = 0;
                 if (Tape == nr){
                     delay(220);
                     quickbrake(PWM);
-                    INBYTE[2] = 'p';
+                    outmes[2] = 'p';
                 }
                 else{
                   BTSerial.println(Ack+"0p");
@@ -233,9 +237,10 @@ Tape = 0;
      
         }
         translate_stop();
+        return outmes;
 }
 
-String Instructions(char inst, int PWM, String INBYTE)
+String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 {
 
     switch (inst)
@@ -243,16 +248,20 @@ String Instructions(char inst, int PWM, String INBYTE)
     case 's':
         translate_stop();
         rotate_stop();
-        INBYTE[1]='1';  //Klar
+        last_inst = 's';
+        Outmes_inst[1]='1';  //Klar
         break;
     
     case 'f':
     translate_FWD(PWM);
     delay(800);
-    real_distance_FL = 0;
-    real_distance_FR = 0;
+    if (last_Zone == 2){
+        delay(300); 
+    }
 
-        ignore = true;
+        //ignore = true;
+        L_lost = false;
+        R_lost = false;
         while (true){
             
         last_real_distance_FL = real_distance_FL;
@@ -260,31 +269,64 @@ String Instructions(char inst, int PWM, String INBYTE)
         last_real_distance_BL = real_distance_BL;
         last_real_distance_BR = real_distance_BR;
   
+        readIRData();
+            if (((sensorValue9+sensorValue10+sensorValue15+sensorValue16+400) / 4) < ((sensorValue1+sensorValue2+sensorValue7+sensorValue8) / 4)){
+                
+                  BTSerial.println(Ack+"0p");
+
+                delay(30);
+            }
+
         real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
         real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
         real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
         real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
         
+        
        /* while((real_distance_FL+real_distance_BL - real_distance_BR+real_distance_FR) < 10){
         rotational_correction(real_distance_FL,real_distance_BL, real_distance_FR, real_distance_BR,tolerance_angle,PWM/3);
         translational_correction(real_distance_FL,real_distance_BL, real_distance_FR, real_distance_BR,tolerance,PWM/3);
         }*/
+       
+        if(real_distance_FL > (last_real_distance_FL + 50)){
+            L_lost = true;
+        }
+        if(real_distance_FR > (last_real_distance_FR + 50)){
+            R_lost = true;
+        }
 
-        if((real_distance_FL+real_distance_FR) > (last_real_distance_FL+last_real_distance_FR) + 100 && ignore == false){
+        if (Zone == '4'){
+            if(L_lost == true || R_lost == true){
+                delay(250);
+                break;
+            }
+        }
+        else if(R_lost && L_lost){
             delay(250);
             break;
         }
-        ignore = false;
+        //ignore = false;
+        if(Zone != '2' && L_lost == false && R_lost == false){
+            if(abs(real_distance_FL-real_distance_FR) > 25 || abs(real_distance_FL-real_distance_FR) > 25 ){
+                quickbrake(PWM);
+                delay(50);
+                total_correction(tolerance_angle,tolerance, PWM_3-3, angle);
+                delay(50);
+                translate_FWD(PWM);
+                delay(10);
+        }
+        }
         }
         translate_stop();
-        INBYTE[1]='1';  //Klar
-    
+        Outmes_inst[1]='1';  //Klar
+        last_inst = 'f';
         break;
     
     case 'b':
         translate_BWD(PWM);
         delay(250);
-        INBYTE[1]='1';  //Klar
+        Outmes_inst[1]='1';  //Klar
+        last_inst = 'b';
         break;
 
     case 'l':
@@ -293,56 +335,65 @@ String Instructions(char inst, int PWM, String INBYTE)
     case 'm': 
     Plockat();
     sing(1);
-    INBYTE[2]='u';  // Plockning utförd
-    INBYTE[1]='1';  // Klar
+    Outmes_inst[2]='u';  // Plockning utförd
+    Outmes_inst[1]='1';  // Klar
+    last_inst = 'm';
     break;
 
     case 'h':
         rotate_centered_clkw(PWM);
-        delay(630);
+        delay(610);
         rotate_stop();
-        INBYTE[1]='1';       
+        Outmes_inst[1]='1';
+        last_inst = 'h';       
         break;
     
     case 'L':
     sing(3);
-    INBYTE[1] = '1';
+    Outmes_inst[1] = '1';
+    last_inst = 'L';
     break;
 
     case 'v':
         rotate_centered_cclkw(PWM);
-        delay(630);
+        delay(610);
         rotate_stop();
-        INBYTE[1]='1';       
+        Outmes_inst[1]='1';  
+        last_inst = 'v';     
         break;
 
     case 'x': 
-         Tapestop(1,PWM);
-        INBYTE[1]='1';  //Klar
+         Outmes_inst = Tapestop(1,PWM,Outmes_inst);
+        Outmes_inst[1]='1';  //Klar
+        last_inst = 'x';
         break;
 
     case 'y': 
-        Tapestop(2,PWM);
-        INBYTE[1]='1';  //Klar
+        Outmes_inst = Tapestop(2,PWM,Outmes_inst);
+        Outmes_inst[1]='1';  //Klar
+        last_inst = 'y';
         break;
 
     case 'z': 
-        Tapestop(3,PWM);
-        INBYTE[1]='1';  //Klar
+        Outmes_inst = Tapestop(3,PWM,Outmes_inst);
+        Outmes_inst[1]='1';  //Klar
+        last_inst = 'z';
         break;
 
     case 'C':
         total_correction(tolerance_angle, tolerance, PWM_3, angle);
-        INBYTE[1] = '1'; //Klar
+        Outmes_inst[1] = '1'; //Klar
+        last_inst = 'C';
         break;
         
 
     default:
         // Ogiltig instruktions karaktär.
-        INBYTE[2] = 'f';
+        Outmes_inst[2] = 'f';
         break;
     }
-    return INBYTE;
+    last_Zone = Zone;
+    return Outmes_inst;
 }
 
 String readBluetoothData(String BTBYTE, int PWM, bool plock)    // PWM för zon 1 och 2.
@@ -354,9 +405,9 @@ String readBluetoothData(String BTBYTE, int PWM, bool plock)    // PWM för zon 
         plock = true;
     }
     
-    String INBYTE="000";  // Return string.
+    String Out_mes="000";  // Return string.
     // Dela upp BTBYTE meddelanden (*/*/*/*).
-    INBYTE[0]=BTBYTE[0];    // Ack.
+    Out_mes[0]=BTBYTE[0];    // Ack.
     State1=BTBYTE[1];       // Auto eller manuell.
     Zone=BTBYTE[2];         // Vilken zon.
     Instruction=BTBYTE[3];  // Instruktion.
@@ -372,23 +423,27 @@ String readBluetoothData(String BTBYTE, int PWM, bool plock)    // PWM för zon 
             switch (Zone)
             {
                 case '1':   // Zone 1
-                        INBYTE=Instructions(Instruction, PWM, INBYTE);
+                        Out_mes=Instructions(Instruction, PWM, Out_mes, Zone);
                         //return "In zone 1";
                     break;
     
                 case '2':   // Zone 2
-                        INBYTE=Instructions(Instruction, PWM, INBYTE);
+                        Out_mes=Instructions(Instruction, PWM, Out_mes, Zone);
                         // if IR-sensor har hittat linje return INBYTE[2]=p
                         //return "In zone 2";
                     break;
         
                 case '3':   // Zone 3
-                        INBYTE=Instructions(Instruction, PWM_3, INBYTE);
+                        Out_mes=Instructions(Instruction, PWM_3, Out_mes,Zone);
                         //return "In zone 3";
                     break;
+                
+                case '4': //Zone 4 (hylla på ena sidan sarg på andra)
+                         Out_mes=Instructions(Instruction, PWM, Out_mes,Zone);
+                         break;
 
                 default:    // Ingen zone.
-                    INBYTE[2]='f';    //
+                    Out_mes[2]='f';    //
                     break;
             }
         break;
@@ -396,26 +451,31 @@ String readBluetoothData(String BTBYTE, int PWM, bool plock)    // PWM för zon 
     default:
         break;
     }
-    return INBYTE;
+    return Out_mes;
 }
-
-
-
 
 
 
 //-----------Main loop-------------------------------------
 void loop()
 {
-
+String INBYTE;  // Transmitting signal string.
 if(BTSerial.available())    // Till AGV    
 {
     BTBYTE=BTSerial.readString();
     //bygger ny string av BTbyte som inte har det osynliga tecknet
     Command ="";
+    read_error = false;
     for (int i = 0; i < 4; ++i){
-    Command = Command + BTBYTE[i];
+        if(BTBYTE[i]=='\0'){
+            read_error = true;
+            break;
+        }
+        else{
+            Command = Command + BTBYTE[i];
+        }
     }
+    if (read_error == false){
     Serial.println(Command);
     //l=BTBYTE.length();              // Längden på BTBYTE.
     //Serial.println("111");          // Test
@@ -426,7 +486,10 @@ if(BTSerial.available())    // Till AGV
     plock = true;
     //Serial.println("DÄR!!!");
     BTSerial.println(INBYTE);     // Send string message to serial.
-    
+    }
+    else{
+        //BTSerial.println("Error reading input");
+    }
 }
 if (Command == "ssss"){
   Serial.println("I stop funktion");
@@ -438,7 +501,7 @@ else{
  // Serial.println("HÄR!!!");
   delay(1000); //1 sek = 1'000ms.
 }
-
+/*
 if(Serial.available())              // Från AGV
 {   
     INBYTE = Serial.readString();
@@ -453,12 +516,8 @@ if(Serial.available())              // Från AGV
 //     // delay(rotate_delay);
 //     // rotate_stop();
 //     // delay(10000);
-    
- 
-
- 
-
 }
+*/
 }
 
 

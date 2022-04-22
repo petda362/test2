@@ -37,9 +37,9 @@
 
 // --------------------- changeable variables-----------------
 
-float multiplier_FL = 0.96;         // Multipliers for seperate wheels, for adjusting motor speed (PWM * multiplier)
+float multiplier_FL = 0.98;         // Multipliers for seperate wheels, for adjusting motor speed (PWM * multiplier)
 float multiplier_FR = 1;
-float multiplier_BL = 0.96;
+float multiplier_BL = 0.98;
 float multiplier_BR = 1;
 float multiplier_rotation = 1;    // multiplier for rotation, for adjusting motor speed whilst rotating (PWM * multiplier)
 int current_dir;
