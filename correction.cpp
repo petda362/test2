@@ -172,7 +172,7 @@ void readUltraSensors()
 
   
 
-  /*
+  
   Serial.print("FL: ");
   Serial.print(real_distance_FL);
   Serial.print("\t");
@@ -184,7 +184,7 @@ void readUltraSensors()
   Serial.print("\t");
   Serial.print("BR: ");
   Serial.println(real_distance_BR);
-  */
+  
 
 }
 
@@ -222,7 +222,7 @@ void stopAtEdge()
       first_it = false;
     }
     readUltraSensors();
-    if(((last_real_distance_FL < 100 && last_real_distance_FL > 10) || (last_real_distance_FR < 100 && last_real_distance_FR > 10)) && ((real_distance_FL - last_real_distance_FL > 100) || (real_distance_FR - last_real_distance_FR > 100) || (real_distance_FL == 0) || (real_distance_FR == 0))){
+    if(((last_real_distance_FL < 100 && last_real_distance_FL > 20) || (last_real_distance_FR < 100 && last_real_distance_FR > 20)) && ((real_distance_FL - last_real_distance_FL > 100) || (real_distance_FR - last_real_distance_FR > 100) || (real_distance_FL == 0) || (real_distance_FR == 0))){
             delay(180);
             translate_stop();
             break;
@@ -234,7 +234,7 @@ void stopAtEdge()
 void stopAtShelf()
 {
     translate_FWD(60);
-    delay(1650);
+    delay(1660);
     translate_stop();
 }
 
