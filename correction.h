@@ -20,5 +20,7 @@ void translational_correction (double dist_FL, double dist_BL, double dist_FR, d
 void readUltraSensors();
 void stopAtEdge();
 void stopAtShelf();
-
+void centerBetweenShelfs();
+void calcPID();
+void pickLeftCube();
 #endif

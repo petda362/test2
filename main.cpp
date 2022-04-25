@@ -110,7 +110,8 @@ void setup()
   pinMode(trigpin_BL, OUTPUT);
   pinMode(echopin_BL, INPUT);
   pinMode(trigpin_BR, OUTPUT);
-  pinMode(echopin_BR, INPUT);*/
+  pinMode(echopin_BR, INPUT);
+  */
 
   pinMode(FWDpin_FL, OUTPUT);
   pinMode(BWDpin_FL, OUTPUT);
@@ -123,9 +124,7 @@ void setup()
 
   Serial.begin(9600);                                            // Serial Communication is starting with 9600 of baudrate speed
   BTSerial.begin(9600);
-  Serial.println("Ultrasonic Sensor HC-SR04 Test, translation."); // print some text in Serial Monitor
-  BTSerial.println("Connected to AGV.");  // Print on bluetooth device.
-
+  
   // IR sensorernas input.
   pinMode(SENSORA_F1,INPUT);
   pinMode(SENSORA_F2,INPUT);
@@ -178,6 +177,8 @@ void loop()
 //     z = (start_pwm - 175) / 47.6;
 //     rotate_delay = -45.1 * pow(z,3) + 77.5 * pow(z,2) - 133 * pow(z,1) + 510;
 //readUltraSensors();
+//calcPID();
+//translate_FWD(200);
 
 if(BTSerial.available())    // Till AGV    
 {

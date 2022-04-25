@@ -10,7 +10,6 @@
 //-------------Libraries---------------
 #include "movement.h"
 
-
 //---------Defining pins----------------
 #define echopin_FL 40 // Forward Left sensor
 #define trigpin_FL 41
@@ -35,10 +34,10 @@
 
 // --------------------- changeable variables-----------------
 
-float multiplier_FL = 1;         // Multipliers for seperate wheels, for adjusting motor speed (PWM * multiplier)
-float multiplier_FR = 0.99;
-float multiplier_BL = 1;
-float multiplier_BR = 0.99;
+float multiplier_FL = 0.989;         // Multipliers for seperate wheels, for adjusting motor speed (PWM * multiplier)
+float multiplier_FR = 1;
+float multiplier_BL = 0.989;
+float multiplier_BR = 1;
 float multiplier_rotation = 1;    // multiplier for rotation, for adjusting motor speed whilst rotating (PWM * multiplier)
 int current_dir;
 
@@ -149,9 +148,24 @@ void rotate_stop()
   analogWrite(BWDpin_BR, 0);
 }
 
+void translate_FWD_pid(int PWM, float pid_output)
+{
+  analogWrite(FWDpin_FL, (0 * multiplier_FL));
+  analogWrite(BWDpin_FL, (PWM - pid_output));
+
+  analogWrite(FWDpin_FR, (0 * multiplier_FR));
+  analogWrite(BWDpin_FR, (PWM + pid_output));
+
+  analogWrite(FWDpin_BL, (0 * multiplier_BL));
+  analogWrite(BWDpin_BL, (PWM - pid_output));
+
+  analogWrite(FWDpin_BR, (0 * multiplier_BR));
+  analogWrite(BWDpin_BR, (PWM + pid_output));
+    current_dir = 1;                                      // Set current direction as translate FWD
+}
+
 void translate_FWD(int PWM)
 {
-  Serial.println("Forward");
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
   analogWrite(BWDpin_FL, (PWM * multiplier_FL));
 
@@ -163,7 +177,6 @@ void translate_FWD(int PWM)
 
   analogWrite(FWDpin_BR, (0 * multiplier_BR));
   analogWrite(BWDpin_BR, (PWM * multiplier_BR));
-
     current_dir = 1;                                      // Set current direction as translate FWD
 }
 

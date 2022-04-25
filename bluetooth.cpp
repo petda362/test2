@@ -129,6 +129,8 @@ String readBluetoothData(String BTBYTE, int PWM, bool plock)    // PWM för zon 
     return INBYTE;
 }
 
+
+
 String Instructions(char inst, int PWM, String INBYTE)
 {
 
@@ -153,6 +155,7 @@ String Instructions(char inst, int PWM, String INBYTE)
         break;
 
     case 'l':
+    pickLeftCube();
     break;
 
     case 'm': 
@@ -171,7 +174,7 @@ String Instructions(char inst, int PWM, String INBYTE)
     
     case 'v':
         rotate_centered_cclkw(PWM);
-        delay(630);
+        delay(620);
         rotate_stop();
         INBYTE[1]='1';       
         break;
@@ -190,8 +193,20 @@ String Instructions(char inst, int PWM, String INBYTE)
          Tapestop(3,PWM);
         INBYTE[1]='1';  //Klar
         break;
+    
     case 'F':
+    myservo.write(0);
     stopAtShelf();
+    break;
+
+    case 'C':
+    centerBetweenShelfs();
+    break;
+
+    case 'B':
+    translate_BWD(60);
+    delay(1515);
+    translate_stop();
     break;
 
 
@@ -203,6 +218,8 @@ String Instructions(char inst, int PWM, String INBYTE)
     return INBYTE;
 }
 
+
+
 String Plocka(char inst, int PWM, String INBYTE)
 {
     int time=1000;  //1000ms=1s
@@ -210,13 +227,7 @@ String Plocka(char inst, int PWM, String INBYTE)
 switch (inst)
 {
 case 'l':   // Vänster plock
-    translate_left(PWM);
-    delay(time);    
-    translate_stop();
-    Plockat();
-    translate_right(PWM);
-    delay(time);    
-    translate_stop();
+    pickLeftCube();
     INBYTE[2]='u';  // Plockning utförd
     INBYTE[1]='1';  //Klar
     break;
@@ -234,21 +245,23 @@ case 'r':   // Höger Plock
     break;
 
 case 'm':
-    
     Plockat();
     sing(1);
     INBYTE[2]='u';  // Plockning utförd
     INBYTE[1]='1';  // Klar
     break;
+
 case 'q':
     Plockat();
     break;
+
 default:
     break;
 }
-
 return INBYTE;
 }
+
+
 
 String Tejpbitar(char inst, int PWM, String INBYTE)
 {
@@ -301,6 +314,8 @@ String Tejpbitar(char inst, int PWM, String INBYTE)
 return INBYTE;
 }
 
+
+
 void readIRData()
 {
    sensorValue1 = analogRead(SENSORA_F1);
@@ -325,6 +340,8 @@ void readIRData()
   // Serial.println(calc1 , "    ", calc2);
 }
 
+
+
 void Plockat() // funktion för att plocka klossen från hyllan
 {
     for(int pos=0; pos <= 120; pos+=10){
@@ -332,8 +349,10 @@ void Plockat() // funktion för att plocka klossen från hyllan
         delay(15);
     }
 delay(300);
-myservo.write(0);
+myservo.write(120);
 }
+
+
 
 void Tapestop(int nr, int PWM) // funktion för att stanna vid tejp nr
 {

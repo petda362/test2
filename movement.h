@@ -19,6 +19,8 @@ void rotate_stop();                                      // Currently same as tr
 
 void translate_FWD(int PWM);                             // Vehicle drives forwards
 
+void translate_FWD_pid(int PWM, float pid_output);                   // test pid
+
 void translate_BWD(int PWM);                             // Vehicle drives backwards
 
 void rotate_centered_clkw(int PWM);                      // Rotates vehicle clockwise from the center axis
