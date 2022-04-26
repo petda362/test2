@@ -58,6 +58,9 @@
 #define SENSORA_B7 A14
 #define SENSORA_B8 A15
 
+#define Switchpin_left 37
+#define Switchpin_right 39
+
 // Servo ----------------
 #define servo_pin 2
 Servo plockservo;
@@ -65,7 +68,7 @@ Servo plockservo;
 
 //--------Changeable variables-----------
 int tolerance = 2;                 // Allowed error before the translation correction algorithm is implemented
-int tolerance_angle = 2;           // Allowed error before the rotational correction algoritm is implemented
+int tolerance_angle = 1;           // Allowed error before the rotational correction algoritm is implemented
 float angle = 15;                // Angle of the sensors from the vehicle
 int start_pwm = 200;                      // Base PWM before modifiers. from 0 to 255
 int correction_pwm = 60;
@@ -131,6 +134,9 @@ bool read_error;
 char last_inst;
 char last_Zone;
 bool orthogonal;
+
+int Switch_left;
+int Switch_right;
 
 // -------------------------Setup-------------------
 void setup()
@@ -215,13 +221,50 @@ void readIRData() // läser alla IR sensorer
 
 }
 
+void center_on_tape() // Centrerar AGV på en tejp med IR-sensorramperna
+{    
+    // center Front IR sensor-ramp on tape 
+    while(true){
+    readIRData();
+    if (sensorValue1 > 200 || sensorValue2 > 200 || sensorValue3 > 200) // någon av de 3 vänstra sensorerna på främre rampen ser tejpen
+    {
+        rotate_clkw_front(PWM_3);
+    }
+    else if(sensorValue6 > 200 || sensorValue7 > 200 || sensorValue8 > 200){ // någon av de 3 högra sensorerna på främre rampen ser tejpen
+        rotate_cclkw_front(PWM_3);
+    }
+    else if(sensorValue4 > 200 || sensorValue5 > 200){ // någon av de 2 mittersta sensorerna på främre rampen ser tejpen
+        delay(10);
+        translate_stop();
+        break;
+    }
+    }
+
+    // center Rear IR sensor-ramp on tape 
+    while (true){
+         if (sensorValue9 > 200 || sensorValue10 > 200 || sensorValue11 > 200){ // någon av de 3 vänstra sensorerna på bakre rampen ser tejpen
+        rotate_cclkw_rear(PWM_3);
+    }
+    else if(sensorValue14 > 200 || sensorValue15 > 200 || sensorValue16 > 200){ // någon av de 3 högra sensorerna på bakre rampen ser tejpen
+        rotate_clkw_rear(PWM_3);
+    }
+    else if(sensorValue4 > 200 || sensorValue5 > 200){ // någon av de 2 mittersta sensorerna på bakre rampen ser tejpen
+        delay(10);
+        translate_stop();
+        break;
+    }
+    }
+
+}
+
 void Plockat() // funktion för att plocka klossen från hyllan
 {
+    plockservo.write(0);
     for(int pos=0; pos <= 120; pos+=10){
         plockservo.write(pos);
         delay(15);
     }
-delay(300);
+//delay(300);
 plockservo.write(0);
 }
 
@@ -262,6 +305,25 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         break;
     
     case 'f':
+
+    if (Zone == '3'){ // om zon 3 och AGV ska fram till hyllkanten och stanna
+        plockservo.write(0);
+        //center_on_tape();
+        translate_FWD(PWM);
+        while(true){ // kör fram tills båda brytarna är intryckta
+            Switch_left = digitalRead(Switchpin_left);
+            Switch_right = digitalRead(Switchpin_right);
+            if (Switch_left == 1 && Switch_right == 1){
+                translate_stop();
+                break;
+            }
+        }
+        Outmes_inst[1] = '1';
+        last_inst = 'f';
+        break;
+    }
+
+    // Andra zoner än zon 3
     translate_FWD(PWM);
     delay(800);
     if (last_Zone == 2){
@@ -283,7 +345,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
                 
                   BTSerial.println(Ack+"0p");
 
-                delay(30);
+                delay(50);
             }
 
         readUSdist();        
@@ -311,7 +373,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
             break;
         }
         //ignore = false;
-        if(Zone != '2' && L_lost == false && R_lost == false){
+        if(Zone != '1' && L_lost == false && R_lost == false){
             if(abs(real_distance_FL-real_distance_FR) > 15 || abs(real_distance_BL-real_distance_BR) > 15 ){
                 translate_stop();
                 if(real_distance_FR + real_distance_BR > real_distance_FL + real_distance_BL){
@@ -358,13 +420,30 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
     case 'l':   // Plocka kub till Vänster 
         pickLeftCube(); // Hitta kub till vänster
         Plockat();  // Plocka kub
+        sing(1);
         pickRightCube();    // Hitta kub till höger
+        Outmes_inst[2]='u';  // Plockning utförd
+        Outmes_inst[1]='1';  // Klar
+        last_inst = 'l';
         break;
 
     case 'r':   // Plocka kub till Höger 
         pickRightCube();    // Hitta kub till höger
         Plockat();  // Plocka kub
-        pickLeftCube(); // Hitta kub till vänster
+        sing(1);
+        translate_left(100);
+        delay(1000);
+        translate_BWD(100);
+        delay(400);
+        translate_stop();
+        plockservo.write(130);
+        
+        //pickLeftCube(); // Hitta kub till vänster
+        
+        
+        Outmes_inst[2]='u';  // Plockning utförd
+        Outmes_inst[1]='1';  // Klar
+        last_inst = 'r';
         break;
 
     case 'm':   // Plocka kub i Mitten
@@ -398,7 +477,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         break;
 
     case 'x': 
-         Outmes_inst = Tapestop(1,PWM,Outmes_inst);
+        Outmes_inst = Tapestop(1,PWM,Outmes_inst);
         Outmes_inst[1]='1';  //Klar
         last_inst = 'x';
         break;
@@ -435,8 +514,11 @@ String readBluetoothData(String BTBYTE, int PWM, bool plock)    // PWM för zon 
 {
     plockservo.attach(servo_pin);
 
+    
+
     if (plock == false){
-        Plockat();   
+        // Plockat();
+        plockservo.write(120);   
         plock = true;
     }
     
@@ -493,7 +575,22 @@ String readBluetoothData(String BTBYTE, int PWM, bool plock)    // PWM för zon 
 
 //-----------Main loop-------------------------------------
 void loop()
-{
+{/*
+    readUSdist();
+    Serial.print("  FL = ");
+    Serial.print(real_distance_FL);
+    Serial.print("  FR = ");
+    Serial.print(real_distance_FR);
+    Serial.print("  BL = ");
+    Serial.print(real_distance_BL);
+    Serial.print("  BR = ");
+    Serial.println(real_distance_BR);
+    //delay(25);
+*/
+    
+   // Serial.println(digitalRead(Switchpin_left));
+   // Serial.println(digitalRead(Switchpin_right));
+    
 String INBYTE;  // Transmitting signal string.
 if(BTSerial.available())    // Till AGV    
 {

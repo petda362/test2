@@ -37,9 +37,12 @@
 #define SENSOR_L 23 // IR-Sensor vänster för att hitta block 
 #define SENSOR_R 22 // IR-Sensor höger för att hitta block
 
+
+
 // --------------------- variables-------------
 bool orth = false;
 bool centered = false;
+//bool COT = false;
 
 // ------------Functions------------------
 void clear_pin(int x)
@@ -181,19 +184,32 @@ void pickRightCube()
    // bool testLeft = false;
    // bool testRight = false;
    // int rightSensorHit = 0;
-    translate_right(80);
+   translate_BWD(50);
+   delay(50);
+   quickbrake(50);
+    translate_right(100);
     while(true)
     {
     rightSensorHit = digitalRead(SENSOR_R);
    // rightSensorHit = digitalRead(SENSOR_R);
     if(rightSensorHit == 0)
     {
+      int a = 0;
       //testLeft = true;
-      while(rightSensorHit==0){
-        rightSensorHit = digitalRead(SENSOR_R);
+      while(true){
+        for(int i = 0; i < 3; ++i){
+          a = a + digitalRead(SENSOR_R);
+        }
+        a = a/3;
+        //rightSensorHit = digitalRead(SENSOR_R);
+        delay(30);
+        if (a == 1){
+          delay(500);
+          break;
+        }
       //do nothing
       }
-      quickbrake(80);
+      translate_stop();
       break;
     
     }

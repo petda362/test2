@@ -27,6 +27,8 @@ void translational_correction (double dist_FL, double dist_BL, double dist_FR, d
 
 void total_correction(int tolerance_angle, int tolerance, int PWM, float angle); // Performs total correction and does not stop until complete
 
+void center_on_tape();
+
 void pickLeftCube();
 
 void pickRightCube();
