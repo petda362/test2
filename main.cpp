@@ -130,6 +130,7 @@ bool R_lost;
 bool read_error;
 char last_inst;
 char last_Zone;
+bool orthogonal;
 
 // -------------------------Setup-------------------
 void setup()
@@ -184,7 +185,15 @@ void setup()
 
 // ----------Functions------------------------------------
 
-void readIRData()
+void readUSdist() //läser av realdistance för alla ultraljud sensorer
+{
+    real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
+    real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
+    real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
+    real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
+}
+
+void readIRData() // läser alla IR sensorer
 {
    sensorValue1 = analogRead(SENSORA_F1);
    sensorValue2 = analogRead(SENSORA_F2);
@@ -277,11 +286,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
                 delay(30);
             }
 
-        real_distance_FL = real_distance(ultraSensor(trigpin_FL, echopin_FL), angle);
-        real_distance_FR = real_distance(ultraSensor(trigpin_FR, echopin_FR), angle);
-        real_distance_BL = real_distance(ultraSensor(trigpin_BL, echopin_BL), angle);
-        real_distance_BR = real_distance(ultraSensor(trigpin_BR, echopin_BR), angle);
-        
+        readUSdist();        
         
        /* while((real_distance_FL+real_distance_BL - real_distance_BR+real_distance_FR) < 10){
         rotational_correction(real_distance_FL,real_distance_BL, real_distance_FR, real_distance_BR,tolerance_angle,PWM/3);
@@ -297,23 +302,38 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 
         if (Zone == '4'){
             if(L_lost == true || R_lost == true){
-                delay(250);
+                delay(450);
                 break;
             }
         }
         else if(R_lost && L_lost){
-            delay(250);
+            delay(450);
             break;
         }
         //ignore = false;
         if(Zone != '2' && L_lost == false && R_lost == false){
-            if(abs(real_distance_FL-real_distance_FR) > 25 || abs(real_distance_FL-real_distance_FR) > 25 ){
-                quickbrake(PWM);
-                delay(50);
+            if(abs(real_distance_FL-real_distance_FR) > 15 || abs(real_distance_BL-real_distance_BR) > 15 ){
+                translate_stop();
+                if(real_distance_FR + real_distance_BR > real_distance_FL + real_distance_BL){
+                    translate_right(PWM_3);
+                }
+                else if(real_distance_FR + real_distance_BR < real_distance_FL + real_distance_BL){
+                    translate_left(PWM_3);                    
+                }
+                delay(30);
+                translate_stop();
+                orthogonal = false;
+                while(!orthogonal){
+                    readUSdist();
+                    orthogonal = rotational_correction(real_distance_FL,real_distance_BL,real_distance_FR,real_distance_BR,2,PWM_3);
+                }
+                translate_FWD(PWM);
+
+                /*delay(50);
                 total_correction(tolerance_angle,tolerance, PWM_3-3, angle);
                 delay(50);
                 translate_FWD(PWM);
-                delay(10);
+                delay(10);*/
         }
         }
         }
