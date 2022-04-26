@@ -77,18 +77,18 @@ int real_distance(float distance, float angle)
 }
 
 
-void rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance_angle, int PWM) {
+bool rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance_angle, int PWM) {
    
     if ((dist_BL < (dist_FL - tolerance_angle)) ||
            (dist_FR < (dist_BR - tolerance_angle)))
   {
-    rotate_centered_cclkw(PWM);
+    rotate_centered_cclkw(PWM+5);
     orth = false;
   }
   else if ((dist_FL < (dist_BL - tolerance_angle) ||
             (dist_FR > (dist_BR + tolerance_angle))))
   {
-    rotate_centered_clkw(PWM);
+    rotate_centered_clkw(PWM+5);
     orth = false;
   }
   else if (!orth) {
@@ -96,6 +96,7 @@ void rotational_correction (double dist_FL, double dist_BL, double dist_FR, doub
     quickbrake(PWM);
     // rotate_stop();
   }
+  return orth;
 }
 
 void translational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance, int PWM) {
@@ -136,7 +137,7 @@ void total_correction(int tolerance_angle, int tolerance, int PWM, float angle) 
     Serial.print(dist_BR);
     */
    if (orth == false){
-    rotational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance_angle, PWM-3);
+    orth = rotational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance_angle, PWM-3);
    }
    else if (centered == false){ 
     translational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance, PWM-3);
