@@ -66,10 +66,10 @@ Servo plockservo;
 //--------Changeable variables-----------
 int tolerance = 2;                 // Allowed error before the translation correction algorithm is implemented
 int tolerance_angle = 2;           // Allowed error before the rotational correction algoritm is implemented
-float angle = 18.33;                // Angle of the sensors from the vehicle
+float angle = 15;                // Angle of the sensors from the vehicle
 int start_pwm = 200;                      // Base PWM before modifiers. from 0 to 255
 int correction_pwm = 60;
-int startup_sound = 0;              // if 1 = sing if 0 dont sing
+int startup_sound = 1;              // if 1 = sing if 0 dont sing
 bool plock = false;
 int PWM_3 = 70; // PWM för zon 3. Måste kalibreras!
 bool corrected = false;
@@ -302,12 +302,12 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 
         if (Zone == '4'){
             if(L_lost == true || R_lost == true){
-                delay(450);
+                delay(400);
                 break;
             }
         }
         else if(R_lost && L_lost){
-            delay(450);
+            delay(400);
             break;
         }
         //ignore = false;
@@ -320,8 +320,14 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
                 else if(real_distance_FR + real_distance_BR < real_distance_FL + real_distance_BL){
                     translate_left(PWM_3);                    
                 }
-                delay(30);
-                translate_stop();
+                while(true){
+                    readUSdist();
+                    if (abs((real_distance_FL + real_distance_BL) - (real_distance_FR+real_distance_BR)) < tolerance){
+                        translate_stop();
+                        break;
+                    }
+                }
+                
                 orthogonal = false;
                 while(!orthogonal){
                     readUSdist();

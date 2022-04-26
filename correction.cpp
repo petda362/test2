@@ -80,13 +80,13 @@ bool rotational_correction (double dist_FL, double dist_BL, double dist_FR, doub
     if ((dist_BL < (dist_FL - tolerance_angle)) ||
            (dist_FR < (dist_BR - tolerance_angle)))
   {
-    rotate_centered_cclkw(PWM+5);
+    rotate_centered_cclkw(PWM+3);
     orth = false;
   }
   else if ((dist_FL < (dist_BL - tolerance_angle) ||
             (dist_FR > (dist_BR + tolerance_angle))))
   {
-    rotate_centered_clkw(PWM+5);
+    rotate_centered_clkw(PWM+3);
     orth = false;
   }
   else if (!orth) {
