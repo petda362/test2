@@ -34,6 +34,8 @@
 #define FWDpin_BR 10 // FWD Backward Right
 #define BWDpin_BR 11 // BWD
 
+#define SENSOR_L 23 // IR-Sensor vänster för att hitta block 
+#define SENSOR_R 22 // IR-Sensor höger för att hitta block
 
 // --------------------- variables-------------
 bool orth = false;
@@ -148,3 +150,53 @@ void total_correction(int tolerance_angle, int tolerance, int PWM, float angle) 
   centered = false;
 }
 
+void pickLeftCube()
+{
+    int leftSensorHit = 0;
+    // bool testLeft = false;
+    // bool testRight = false;
+    // int rightSensorHit = 0;
+    translate_left(80);
+    while(true)
+    {
+    leftSensorHit = digitalRead(SENSOR_L);
+   // rightSensorHit = digitalRead(SENSOR_R);
+    if(leftSensorHit == 0)
+    {
+      //testLeft = true;
+      while(leftSensorHit==0){
+        leftSensorHit = digitalRead(SENSOR_L);
+      //do nothing
+      }
+      quickbrake(80);
+      break;
+    
+    }
+    }
+}
+
+void pickRightCube()
+{
+    int rightSensorHit = 0;
+   // bool testLeft = false;
+   // bool testRight = false;
+   // int rightSensorHit = 0;
+    translate_right(80);
+    while(true)
+    {
+    rightSensorHit = digitalRead(SENSOR_R);
+   // rightSensorHit = digitalRead(SENSOR_R);
+    if(rightSensorHit == 0)
+    {
+      //testLeft = true;
+      while(rightSensorHit==0){
+        rightSensorHit = digitalRead(SENSOR_R);
+      //do nothing
+      }
+      quickbrake(80);
+      break;
+    
+    }
+    
+    }
+}

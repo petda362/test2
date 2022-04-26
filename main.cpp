@@ -30,6 +30,7 @@
 #define STATE 50      // STATE PIN HC05
 #define buzzer_pin 30 // pin for audio buzzer
 
+// Motordrivare
 #define FWDpin_FL 9 // FWD Forward left
 #define BWDpin_FL 8 // BWD
 #define FWDpin_FR 4 // FWD Forward Right
@@ -39,8 +40,7 @@
 #define FWDpin_BR 10 // FWD Backward Right
 #define BWDpin_BR 11 // BWD
 
-
-#define SENSORA_F1 A0   // Sensor ramp forward
+#define SENSORA_F1 A8   // Sensor ramp forward
 #define SENSORA_F2 A1
 #define SENSORA_F3 A2
 #define SENSORA_F4 A3
@@ -49,7 +49,7 @@
 #define SENSORA_F7 A6
 #define SENSORA_F8 A7
 
-#define SENSORA_B1 A8   // sensor ramp backward
+#define SENSORA_B1 A0   // sensor ramp backward
 #define SENSORA_B2 A9
 #define SENSORA_B3 A10
 #define SENSORA_B4 A11
@@ -355,11 +355,20 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         last_inst = 'b';
         break;
 
-    case 'l':
-    break;
+    case 'l':   // Plocka kub till Vänster 
+        pickLeftCube(); // Hitta kub till vänster
+        Plockat();  // Plocka kub
+        pickRightCube();    // Hitta kub till höger
+        break;
 
-    case 'm': 
-    Plockat();
+    case 'r':   // Plocka kub till Höger 
+        pickRightCube();    // Hitta kub till höger
+        Plockat();  // Plocka kub
+        pickLeftCube(); // Hitta kub till vänster
+        break;
+
+    case 'm':   // Plocka kub i Mitten
+    Plockat();  // Plocka kub
     sing(1);
     Outmes_inst[2]='u';  // Plockning utförd
     Outmes_inst[1]='1';  // Klar
