@@ -159,19 +159,29 @@ void pickLeftCube()
     // bool testLeft = false;
     // bool testRight = false;
     // int rightSensorHit = 0;
-    translate_left(80);
+    translate_left(115);
     while(true)
     {
     leftSensorHit = digitalRead(SENSOR_L);
-   // rightSensorHit = digitalRead(SENSOR_R);
-    if(leftSensorHit == 0)
-    {
+    
+  if(leftSensorHit == 0){
+
+    int a = 0;
       //testLeft = true;
-      while(leftSensorHit==0){
-        leftSensorHit = digitalRead(SENSOR_L);
+      while(true){
+        for(int i = 0; i < 3; ++i){
+          a = a + digitalRead(SENSOR_L);
+        }
+        a = a/3;
+        //rightSensorHit = digitalRead(SENSOR_R);
+        delay(30);
+        if (a == 1){
+          delay(150);
+          break;
+        }
       //do nothing
       }
-      quickbrake(80);
+      translate_stop();
       break;
     
     }
@@ -187,7 +197,7 @@ void pickRightCube()
    translate_BWD(50);
    delay(50);
    quickbrake(50);
-    translate_right(100);
+    translate_right(115);
     while(true)
     {
     rightSensorHit = digitalRead(SENSOR_R);
@@ -204,7 +214,7 @@ void pickRightCube()
         //rightSensorHit = digitalRead(SENSOR_R);
         delay(30);
         if (a == 1){
-          delay(500);
+          delay(150);
           break;
         }
       //do nothing

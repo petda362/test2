@@ -296,6 +296,18 @@ int Tempo_Communism[] = {
   4, 6, 16, 4, 4, 2, 4, 4, 1
 };
 
+int melody_nokia[] = {
+
+  // Nokia Ringtone 
+  // Score available at https://musescore.com/user/29944637/scores/5266155
+  
+  NOTE_E5, 8, NOTE_D5, 8, NOTE_FS4, 4, NOTE_GS4, 4, 
+  NOTE_CS5, 8, NOTE_B4, 8, NOTE_D4, 4, NOTE_E4, 4, 
+  NOTE_B4, 8, NOTE_A4, 8, NOTE_CS4, 4, NOTE_E4, 4,
+  NOTE_A4, 2, 
+};
+
+int tempo_nokia[30] = {180,180,180, 180,180, 180,180, 180,180, 180,180, 180,180, 180,180, 180,180, 180,180, 180,180, 180,180, 180, 180, 0 };
 
 //-----------------functions------------------
 
@@ -338,6 +350,14 @@ void sing(int s) {
     size = sizeof(melody_Communism);// / sizeof(int);
     break;
 
+    case 4: for(unsigned i =0; i < 26; ++i){
+    Melody[i] = melody_nokia[i];
+    Tempo[i] = tempo_nokia[i];
+    }
+    Melody[26] = 1;
+    size = sizeof(melody_nokia);// / sizeof(int);
+    break;
+
     }
     
     // iterate over the notes of the melody:
@@ -349,6 +369,15 @@ void sing(int s) {
       //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
       if (s == 2){
         noteDuration = Tempo[thisNote];
+        if(Tempo[thisNote] == 0){
+          break;
+        }
+      }
+      else if (s == 4){
+        noteDuration = ((4000*4)/Tempo[thisNote]);
+        if(Tempo[thisNote] == 0){
+          break;
+        }
       }
       else{
         if (Tempo[thisNote]==0){

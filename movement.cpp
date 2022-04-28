@@ -223,7 +223,7 @@ void rotate_centered_cclkw(int PWM)
   current_dir = 6;                                      // Set current direction as rotate counter clockwise
 }
 
-void rotate_clkw_rear(int PWM)
+void rotate_clkw_front(int PWM)
 {
   analogWrite(FWDpin_FL, (PWM * multiplier_FL));
   analogWrite(BWDpin_FL, (0 * multiplier_FL));
@@ -240,7 +240,7 @@ void rotate_clkw_rear(int PWM)
   current_dir = 7;                                      // Set current direction as rotate clockwise on the rear axis
 }
 
-void rotate_cclkw_rear(int PWM)
+void rotate_cclkw_front(int PWM)
 {
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
   analogWrite(BWDpin_FL, (PWM * multiplier_FL));
@@ -257,7 +257,7 @@ void rotate_cclkw_rear(int PWM)
   current_dir = 8;                                      // Set current direction as rotate counter clockwise on the rear axis
 }
 
-void rotate_clkw_front(int PWM)
+void rotate_clkw_rear(int PWM)
 {
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
   analogWrite(BWDpin_FL, (0 * multiplier_FL));
@@ -274,7 +274,7 @@ void rotate_clkw_front(int PWM)
   current_dir = 9;                                      // Set current direction as rotate clockwise on the front axis
 }
 
-void rotate_cclkw_front(int PWM)
+void rotate_cclkw_rear(int PWM)
 {
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
   analogWrite(BWDpin_FL, (0 * multiplier_FL));
