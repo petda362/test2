@@ -17,52 +17,52 @@
 #include "audio.h"
 #include "Servo.h"
 
-//---------Defining pins----------------
-#define echopin_FL 40 // Forward Left sensor
-#define trigpin_FL 41
-#define echopin_FR 42 // Forward Right sensor
-#define trigpin_FR 43
-#define echopin_BL 44 // Back Left
-#define trigpin_BL 45
+//---------Defining pins---------------- GÄLLER MED SHIELD
+#define echopin_FL 24 // Forward Left sensor
+#define trigpin_FL 22
+#define echopin_FR 50 // Forward Right sensor
+#define trigpin_FR 52
+#define echopin_BL 28 // Back Left
+#define trigpin_BL 30
 #define echopin_BR 46 // Back Right
-#define trigpin_BR 47
+#define trigpin_BR 48
 
-#define STATE 50      // STATE PIN HC05
-#define buzzer_pin 30 // pin for audio buzzer
+#define STATE 53      // STATE PIN HC05
+#define buzzer_pin 32 // pin for audio buzzer
 
 // Motordrivare
 #define FWDpin_FL 9 // FWD Forward left
 #define BWDpin_FL 8 // BWD
 #define FWDpin_FR 4 // FWD Forward Right
 #define BWDpin_FR 5 // BWD
-#define FWDpin_BL 7 // FWD Backward LefB
-#define BWDpin_BL 6 // BWD
-#define FWDpin_BR 10 // FWD Backward Right
-#define BWDpin_BR 11 // BWD
+#define FWDpin_BL  11 // FWD Backward LefB
+#define BWDpin_BL  10 // BWD
+#define FWDpin_BR 6 // FWD Backward Right
+#define BWDpin_BR 7 // BWD
 
-#define SENSORA_F1 A0   // Sensor ramp forward
-#define SENSORA_F2 A1
-#define SENSORA_F3 A2
-#define SENSORA_F4 A3
-#define SENSORA_F5 A4
-#define SENSORA_F6 A5
-#define SENSORA_F7 A6
-#define SENSORA_F8 A7
+#define SENSORA_F1 A8   // Sensor ramp forward
+#define SENSORA_F2 A9
+#define SENSORA_F3 A10
+#define SENSORA_F4 A11
+#define SENSORA_F5 A12
+#define SENSORA_F6 A13
+#define SENSORA_F7 A14
+#define SENSORA_F8 A15
 
-#define SENSORA_B1 A8   // sensor ramp backward
-#define SENSORA_B2 A9
-#define SENSORA_B3 A10
-#define SENSORA_B4 A11
-#define SENSORA_B5 A12
-#define SENSORA_B6 A13
-#define SENSORA_B7 A14
-#define SENSORA_B8 A15
+#define SENSORA_B1 A0  // sensor ramp backward
+#define SENSORA_B2 A1
+#define SENSORA_B3 A2
+#define SENSORA_B4 A3
+#define SENSORA_B5 A4
+#define SENSORA_B6 A5
+#define SENSORA_B7 A6
+#define SENSORA_B8 A7
 
-#define Switchpin_left 37
-#define Switchpin_right 39
+#define Switchpin_left 34
+#define Switchpin_right 36
 
 // Servo ----------------
-#define servo_pin 2
+#define servo_pin 38 // servo1 38, servo2 40, servo3 42
 Servo plockservo;
 
 

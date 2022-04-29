@@ -57,32 +57,32 @@ int sensorValue9, sensorValue10, sensorValue11, sensorValue12, sensorValue13, se
 
 //---------Defining pins----------------
 
-#define SENSORA_F1 A0   // Sensor ramp forward
-#define SENSORA_F2 A1
-#define SENSORA_F3 A2
-#define SENSORA_F4 A3
-#define SENSORA_F5 A4
-#define SENSORA_F6 A5
-#define SENSORA_F7 A6
-#define SENSORA_F8 A7
+#define SENSORA_F1 A8   // Sensor ramp forward
+#define SENSORA_F2 A9
+#define SENSORA_F3 A10
+#define SENSORA_F4 A11
+#define SENSORA_F5 A12
+#define SENSORA_F6 A13
+#define SENSORA_F7 A14
+#define SENSORA_F8 A15
 
-#define SENSORA_B1 A8   // sensor ramp backward
-#define SENSORA_B2 A9
-#define SENSORA_B3 A10
-#define SENSORA_B4 A11
-#define SENSORA_B5 A12
-#define SENSORA_B6 A13
-#define SENSORA_B7 A14
-#define SENSORA_B8 A15
+#define SENSORA_B1 A0  // sensor ramp backward
+#define SENSORA_B2 A1
+#define SENSORA_B3 A2
+#define SENSORA_B4 A3
+#define SENSORA_B5 A4
+#define SENSORA_B6 A5
+#define SENSORA_B7 A6
+#define SENSORA_B8 A7
 
-#define echopin_FL 40 // Forward Left sensor
-#define trigpin_FL 41
-#define echopin_FR 42 // Forward Right sensor
-#define trigpin_FR 43
-#define echopin_BL 44 // Back Left
-#define trigpin_BL 45
+#define echopin_FL 24 // Forward Left sensor
+#define trigpin_FL 22
+#define echopin_FR 50 // Forward Right sensor
+#define trigpin_FR 52
+#define echopin_BL 28 // Back Left
+#define trigpin_BL 30
 #define echopin_BR 46 // Back Right
-#define trigpin_BR 47
+#define trigpin_BR 48
 
 
 
