@@ -161,19 +161,19 @@ void pickLeftCube()
     // bool testRight = false;
     // int rightSensorHit = 0;
     translate_BWD(100);
-    delay(175);
+    delay(160);
     translate_stop();
     delay(300);
-    translate_left(120);
+    translate_left(170);
     while(true)
     {
       lastMeasurementIR = leftSensorHit;
-      for(int i = 0; i<10; i++)
+      for(int i = 0; i<5; i++)
       {
         leftSensorHit += digitalRead(SENSOR_L);
-        delay(25);
+        delay(30);
       }
-      if(leftSensorHit > 7)
+      if(leftSensorHit > 2)
       {
         leftSensorHit = 1;
       }
@@ -183,7 +183,8 @@ void pickLeftCube()
       }
       if(leftSensorHit - lastMeasurementIR == -1)
       {
-        delay(170);
+        translate_right(170);
+        delay(100);
         translate_stop();
         break;
       }
@@ -224,19 +225,19 @@ void pickRightCube()
     // bool testRight = false;
     // int rightSensorHit = 0;
     translate_BWD(100);
-    delay(175);
+    delay(160);
     translate_stop();
     delay(300);
-    translate_right(120);
+    translate_right(170);
     while(true)
     {
       lastMeasurementIR = rightSensorHit;
-      for(int i = 0; i<10; i++)
+      for(int i = 0; i<5; i++)
       {
-        rightSensorHit += digitalRead(SENSOR_L);
-        delay(25);
+        rightSensorHit += digitalRead(SENSOR_R);
+        delay(30);
       }
-      if(rightSensorHit > 7)
+      if(rightSensorHit > 3)
       {
         rightSensorHit = 1;
       }
@@ -246,7 +247,8 @@ void pickRightCube()
       }
       if(rightSensorHit - lastMeasurementIR == -1)
       {
-        delay(170);
+        translate_left(170);
+        delay(100);
         translate_stop();
         break;
       }

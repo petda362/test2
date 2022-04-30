@@ -571,10 +571,10 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         delay(200);
         translate_stop();
         delay(500);
-        translate_right(100); 
-        delay(850);
+        translate_right(200); 
+        delay(450);
         translate_BWD(100);
-        delay(500);
+        delay(300);
         translate_stop();
 
         plockservo.write(130); // fäll ner plockarmen
@@ -611,10 +611,10 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         delay(200);
         translate_stop();
         delay(500);
-        translate_left(100); 
-        delay(850);
+        translate_left(200); 
+        delay(450);
         translate_BWD(100);
-        delay(500);
+        delay(300);
         translate_stop();
         
         plockservo.write(130); // fäll ner plockarmen
