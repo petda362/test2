@@ -24,14 +24,14 @@
 #define STATE 53      // STATE PIN HC05
 #define buzzer_pin 32 // pin for audio buzzer
 
-#define FWDpin_FL 9 // FWD Forward left
-#define BWDpin_FL 8 // BWD
-#define FWDpin_FR 4 // FWD Forward Right
-#define BWDpin_FR 5 // BWD
-#define FWDpin_BL  11 // FWD Backward LefB
-#define BWDpin_BL  10 // BWD
-#define FWDpin_BR 6 // FWD Backward Right
-#define BWDpin_BR 7 // BWD
+#define FWDpin_FL 8 // FWD Forward left
+#define BWDpin_FL 9 // BWD
+#define FWDpin_FR 7 // FWD Forward Right
+#define BWDpin_FR 6 // BWD
+#define FWDpin_BL  10 // FWD Backward LefB
+#define BWDpin_BL  11 // BWD
+#define FWDpin_BR 5 // FWD Backward Right
+#define BWDpin_BR 4 // BWD
 
 
 
@@ -77,9 +77,8 @@ void diagonal_FW_left(int PWM)
   analogWrite(BWDpin_BR, (0 * multiplier_BR));
 }
 
-void translate_right(int PWM)
+void translate_left(int PWM)
 {
-  Serial.println("move right");
 
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
   analogWrite(BWDpin_FL, (PWM * multiplier_FL));
@@ -97,10 +96,8 @@ void translate_right(int PWM)
 
 }
 
-void translate_left(int PWM)
+void translate_right(int PWM)
 {
-
-  Serial.println("move left");
 
   analogWrite(FWDpin_FL, (PWM * multiplier_FL));
   analogWrite(BWDpin_FL, (0 * multiplier_FL));
@@ -119,7 +116,6 @@ void translate_left(int PWM)
 
 void translate_stop()
 {
-  Serial.println("Centered");
 
   analogWrite(FWDpin_FL, 0);
   analogWrite(BWDpin_FL, 0);
@@ -136,7 +132,6 @@ void translate_stop()
 
 void rotate_stop()
 {
-  Serial.println("ortogonal");
 
   analogWrite(FWDpin_FL, 0);
   analogWrite(BWDpin_FL, 0);
@@ -151,9 +146,8 @@ void rotate_stop()
   analogWrite(BWDpin_BR, 0);
 }
 
-void translate_FWD(int PWM)
+void translate_BWD(int PWM)
 {
-  Serial.println("Forward");
   analogWrite(FWDpin_FL, (0 * multiplier_FL));
   analogWrite(BWDpin_FL, (PWM * multiplier_FL));
 
@@ -166,12 +160,11 @@ void translate_FWD(int PWM)
   analogWrite(FWDpin_BR, (0 * multiplier_BR));
   analogWrite(BWDpin_BR, (PWM * multiplier_BR));
 
-    current_dir = 1;                                      // Set current direction as translate FWD
+    current_dir = 2;                                      // Set current direction as translate BWD
 }
 
-void translate_BWD(int PWM)
+void translate_FWD(int PWM)
 {
-  Serial.println("Backward");
   analogWrite(FWDpin_FL, (PWM * multiplier_FL));
   analogWrite(BWDpin_FL, (0 * multiplier_FL));
 
@@ -184,12 +177,11 @@ void translate_BWD(int PWM)
   analogWrite(FWDpin_BR, (PWM * multiplier_BR));
   analogWrite(BWDpin_BR, (0 * multiplier_BR));
 
-    current_dir = 2;                                      // Set current direction as translate BWD
+    current_dir = 1;                                      // Set current direction as translate FWD
 }
 
-void rotate_centered_clkw(int PWM)
+void rotate_centered_cclkw(int PWM)
 {
-  Serial.println("rotate clockwise");
   analogWrite(FWDpin_FL, (0 * multiplier_FL * multiplier_rotation));
   analogWrite(BWDpin_FL, (PWM * multiplier_FL * multiplier_rotation));
 
@@ -205,9 +197,8 @@ void rotate_centered_clkw(int PWM)
   current_dir = 5;                                      // Set current direction as rotate clockwise
 }
 
-void rotate_centered_cclkw(int PWM)
+void rotate_centered_clkw(int PWM)
 {
-  Serial.println("rotate counter-clockwise");
   analogWrite(FWDpin_FL, (PWM * multiplier_FL * multiplier_rotation));
   analogWrite(BWDpin_FL, (0 * multiplier_FL * multiplier_rotation));
 

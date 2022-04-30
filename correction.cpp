@@ -25,14 +25,14 @@
 #define STATE 53      // STATE PIN HC05
 #define buzzer_pin 32 // pin for audio buzzer
 
-#define FWDpin_FL 9 // FWD Forward left
-#define BWDpin_FL 8 // BWD
-#define FWDpin_FR 4 // FWD Forward Right
-#define BWDpin_FR 5 // BWD
-#define FWDpin_BL  11 // FWD Backward LefB
-#define BWDpin_BL  10 // BWD
-#define FWDpin_BR 6 // FWD Backward Right
-#define BWDpin_BR 7 // BWD
+#define FWDpin_FL 8 // FWD Forward left
+#define BWDpin_FL 9 // BWD
+#define FWDpin_FR 7 // FWD Forward Right
+#define BWDpin_FR 6 // BWD
+#define FWDpin_BL  10 // FWD Backward LefB
+#define BWDpin_BL  11 // BWD
+#define FWDpin_BR 5 // FWD Backward Right
+#define BWDpin_BR 4 // BWD
 
 #define SENSOR_L 44 // IR-Sensor vänster för att hitta block 
 #define SENSOR_R 26 // IR-Sensor höger för att hitta block
@@ -155,12 +155,40 @@ void total_correction(int tolerance_angle, int tolerance, int PWM, float angle) 
 
 void pickLeftCube()
 {
+    int lastMeasurementIR = 0;
     int leftSensorHit = 0;
     // bool testLeft = false;
     // bool testRight = false;
     // int rightSensorHit = 0;
-    translate_left(115);
+    translate_BWD(100);
+    delay(175);
+    translate_stop();
+    delay(300);
+    translate_left(120);
     while(true)
+    {
+      lastMeasurementIR = leftSensorHit;
+      for(int i = 0; i<10; i++)
+      {
+        leftSensorHit += digitalRead(SENSOR_L);
+        delay(25);
+      }
+      if(leftSensorHit > 7)
+      {
+        leftSensorHit = 1;
+      }
+      else
+      {
+        leftSensorHit = 0;
+      }
+      if(leftSensorHit - lastMeasurementIR == -1)
+      {
+        delay(170);
+        translate_stop();
+        break;
+      }
+    }
+    /*while(true)
     {
     leftSensorHit = digitalRead(SENSOR_L);
     
@@ -185,11 +213,45 @@ void pickLeftCube()
       break;
     
     }
-    }
+    }*/
 }
 
 void pickRightCube()
 {
+    int lastMeasurementIR = 0;
+    int rightSensorHit = 0;
+    // bool testLeft = false;
+    // bool testRight = false;
+    // int rightSensorHit = 0;
+    translate_BWD(100);
+    delay(175);
+    translate_stop();
+    delay(300);
+    translate_right(120);
+    while(true)
+    {
+      lastMeasurementIR = rightSensorHit;
+      for(int i = 0; i<10; i++)
+      {
+        rightSensorHit += digitalRead(SENSOR_L);
+        delay(25);
+      }
+      if(rightSensorHit > 7)
+      {
+        rightSensorHit = 1;
+      }
+      else
+      {
+        rightSensorHit = 0;
+      }
+      if(rightSensorHit - lastMeasurementIR == -1)
+      {
+        delay(170);
+        translate_stop();
+        break;
+      }
+    }
+  /*
     int rightSensorHit = 0;
    // bool testLeft = false;
    // bool testRight = false;
@@ -224,5 +286,5 @@ void pickRightCube()
     
     }
     
-    }
+    }*/
 }

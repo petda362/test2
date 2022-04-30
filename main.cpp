@@ -31,14 +31,15 @@
 #define buzzer_pin 32 // pin for audio buzzer
 
 // Motordrivare
-#define FWDpin_FL 9 // FWD Forward left
-#define BWDpin_FL 8 // BWD
-#define FWDpin_FR 4 // FWD Forward Right
-#define BWDpin_FR 5 // BWD
-#define FWDpin_BL  11 // FWD Backward LefB
-#define BWDpin_BL  10 // BWD
-#define FWDpin_BR 6 // FWD Backward Right
-#define BWDpin_BR 7 // BWD
+#define FWDpin_FL 8 // FWD Forward left
+#define BWDpin_FL 9 // BWD
+#define FWDpin_FR 7 // FWD Forward Right
+#define BWDpin_FR 6 // BWD
+#define FWDpin_BL  10 // FWD Backward LefB
+#define BWDpin_BL  11 // BWD
+#define FWDpin_BR 5 // FWD Backward Right
+#define BWDpin_BR 4 // BWD
+
 
 #define SENSORA_F1 A8   // Sensor ramp forward
 #define SENSORA_F2 A9
@@ -167,7 +168,7 @@ void setup()
 
   Serial.begin(9600);                                            // Serial Communication is starting with 9600 of baudrate speed
   BTSerial.begin(9600);
-  Serial.println("Ultrasonic Sensor HC-SR04 Test, translation."); // print some text in Serial Monitor
+  //Serial.println("Ultrasonic Sensor HC-SR04 Test, translation."); // print some text in Serial Monitor
   BTSerial.println("Connected to AGV.");  // Print on bluetooth device.
 
   // IR sensorernas input.
@@ -226,34 +227,122 @@ void readIRData() // läser alla IR sensorer
    sensorValue16 =  analogRead(SENSORA_B8);
 
 }
-
+        /*
+        Serial.print(sensorValue1);
+        Serial.print("\t");
+        Serial.print(sensorValue2);
+        Serial.print("\t");
+        Serial.print(sensorValue3);
+        Serial.print("\t");
+        Serial.print(sensorValue4);
+        Serial.print("\t");
+        Serial.print(sensorValue5);
+        Serial.print("\t");
+        Serial.print(sensorValue6);
+        Serial.print("\t");
+        Serial.print(sensorValue7);
+        Serial.print("\t");
+        Serial.print(sensorValue8);
+        Serial.print(" ||| \t");
+        Serial.print(sensorValue9);
+        Serial.print("\t");
+        Serial.print(sensorValue10);
+        Serial.print("\t");
+        Serial.print(sensorValue11);
+        Serial.print("\t");
+        Serial.print(sensorValue12);
+        Serial.print("\t");
+        Serial.print(sensorValue13);
+        Serial.print("\t");
+        Serial.print(sensorValue14);
+        Serial.print("\t");
+        Serial.print(sensorValue15);
+        Serial.print("\t");
+        Serial.println(sensorValue16);
+        delay(50);*/
 void center_on_tape() // Centrerar AGV på en tejp med IR-sensorramperna
-{    
-    int center_tape_PWM = 77;
-    // center Rear IR sensor-ramp on tape 
+{ 
+  int errorFront;
+  int errorBack;
+    //int center_tape_PWM = 77;
+
+    // center Rear IR sensor-ramp on tape
+    while(true){
     while(true){
         readIRData();
+        int frontLeftUS = sensorValue1 + sensorValue2 + sensorValue3 + sensorValue4;
+        int frontRightUS = sensorValue5 + sensorValue6 + sensorValue7 + sensorValue8;
+        errorFront = frontLeftUS - frontRightUS;
 
+        if(errorFront > 50)
+        {
+          rotate_cclkw_front(100);
+        }
+        else if(errorFront < -50)
+        {
+          rotate_clkw_front(100);
+        }
+        else
+        {
+          rotate_stop();
+          break;
+        }
+       
+
+
+  
+
+
+    
+/*
     if (sensorValue1 > 400 || sensorValue2 > 400 || sensorValue3 > 400) // någon av de 3 högra sensorerna på bakre rampen ser tejpen
     {
-        rotate_clkw_rear(center_tape_PWM);
+        rotate_cclkw_rear(100);
     }
     else if(sensorValue6 > 400 || sensorValue7 > 400 || sensorValue8 > 400){ // någon av de 3 vänstra sensorerna på bakre rampen ser tejpen
-        rotate_cclkw_rear(center_tape_PWM);
+        rotate_clkw_rear(100);
     }
     else if (sensorValue9 > 400 || sensorValue10 > 400 || sensorValue11 > 400){ // någon av de 3 vänstra sensorerna på främre rampen ser tejpen
-        rotate_clkw_front(center_tape_PWM);
+        rotate_cclkw_front(100);
     }
     else if(sensorValue14 > 400 || sensorValue15 > 400 || sensorValue16 > 400){ // någon av de 3 högra sensorerna på främre rampen ser tejpen
-        rotate_cclkw_front(center_tape_PWM);
+        rotate_clkw_front(100);
     }
     else if(sensorValue12 > 400 && sensorValue13 > 400 && sensorValue4 > 400 && sensorValue5 > 400 ){ // någon av de 2 mittersta sensorerna på främre rampen ser tejpen
-        
-        translate_stop();
+        rotate_stop();
+        //quickbrake(100);
         break;
-    }
-    }
+    }*/
 
+    
+    }
+        while(true){
+        readIRData();
+        int backRightUS = sensorValue9 + sensorValue10 + sensorValue11 + sensorValue12;
+        int backLeftUS = sensorValue13 + sensorValue14 + sensorValue15 + sensorValue16;
+        int errorBack = backRightUS - backLeftUS;
+       
+
+        if(errorBack > 50)
+        {
+          rotate_cclkw_rear(100);
+        }
+        else if(errorBack < -50)
+        {
+          rotate_clkw_rear(100);
+        }
+        else
+        {
+          rotate_stop();
+          break;
+        }
+      }
+      readIRData();
+      if(errorFront > -10 && errorFront < 10 && errorBack > -10 && errorBack < 10)
+      {
+        break;
+      }
+    }
 }
 
 void correct_FWD(int PWM_C) // corrigera AGV medans den kör
@@ -324,7 +413,7 @@ Tape = 0;
         while(Tape < nr){
             readIRData();
             
-            if (((sensorValue9+sensorValue10+sensorValue15+sensorValue16) / 4) > ((sensorValue1+sensorValue2+sensorValue7+sensorValue8+800 ) / 4)){
+            if (((sensorValue9+sensorValue10+sensorValue11+sensorValue12+sensorValue13+sensorValue14+sensorValue15+sensorValue16 + 1500) / 8) < ((sensorValue1+sensorValue2+sensorValue3+sensorValue4+sensorValue5+sensorValue6+sensorValue7+sensorValue8) / 8)){
                 Tape = Tape + 1;
                 if (Tape == nr){
                     delay(220);
@@ -371,6 +460,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
     case 'f':
 
     if (Zone == '3'){ // om zon 3 och AGV ska fram till hyllkanten och stanna
+        center_on_tape();
         to_hylla();
         
         Outmes_inst[1] = '1';
@@ -380,10 +470,11 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 
     // Andra zoner än zon 3
     translate_FWD(PWM);
-    delay(800);
     if (last_Zone == 2){
-        delay(300); 
+        delay(500); 
     }
+    delay(800);
+
 
         //ignore = true;
         L_lost = false;
@@ -450,18 +541,19 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
     case 'b':
         translate_BWD(PWM);
         delay(250);
+        // ska den inte stanna här?
         Outmes_inst[1]='1';  //Klar
         last_inst = 'b';
         break;
 
     case 'l':   // Plocka kub till Vänster 
         
-        to_hylla(); // kör fram till hyllkanten
+        //to_hylla(); // kör fram till hyllkanten
 
         pickLeftCube(); // Hitta kub till vänster
         
         //kör fram lite för att korrigera fel på hjul
-        translate_FWD(200);
+        translate_FWD(115);
          while(true){ // kör fram tills båda brytarna är intryckta
             Switch_left = digitalRead(Switchpin_left);
             Switch_right = digitalRead(Switchpin_right);
@@ -475,6 +567,10 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         sing(1);    // spela ljud
         plockservo.write(0);
         // kör tillbaka till mitten av korridoren
+        translate_BWD(100);
+        delay(200);
+        translate_stop();
+        delay(500);
         translate_right(100); 
         delay(850);
         translate_BWD(100);
@@ -490,11 +586,11 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 
     case 'r':   // Plocka kub till Höger     
         
-        to_hylla(); // kör fram till hyllkanten
+        //to_hylla(); // kör fram till hyllkanten
         
         pickRightCube();    // Hitta kub till höger
 
-        translate_FWD(200);
+        translate_FWD(115);
          while(true){ // kör fram tills båda brytarna är intryckta
             Switch_left = digitalRead(Switchpin_left);
             Switch_right = digitalRead(Switchpin_right);
@@ -511,6 +607,10 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         sing(1);    // spela ljud
         plockservo.write(0);
         // kör tillbaka till mitten av korridoren
+        translate_BWD(100);
+        delay(200);
+        translate_stop();
+        delay(500);
         translate_left(100); 
         delay(850);
         translate_BWD(100);
@@ -548,7 +648,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 
     case 'h': // roterar 90 grader medurs
         rotate_centered_clkw(PWM);
-        delay(670);
+        delay(645);
         rotate_stop();
         Outmes_inst[1]='1';
         last_inst = 'h';       
@@ -571,7 +671,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 
     case 'v': // roterar 90 grader moturs
         rotate_centered_cclkw(PWM);
-        delay(670);
+        delay(645);
         rotate_stop();
         Outmes_inst[1]='1';  
         last_inst = 'v';     
