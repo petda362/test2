@@ -28,7 +28,7 @@
 #define trigpin_BR 48
 
 #define STATE 53      // STATE PIN HC05
-#define buzzer_pin 32 // pin for audio buzzer
+#define buzzer_pin 29 // pin for audio buzzer
 
 // Motordrivare
 #define FWDpin_FL 8 // FWD Forward left
@@ -75,7 +75,7 @@ int start_pwm = 200;                      // Base PWM before modifiers. from 0 t
 int correction_pwm = 60;
 int startup_sound = 4;              // if 1 = sing if 0 dont sing
 bool plock = false;
-int PWM_3 = 70; // PWM för zon 3. Måste kalibreras!
+int PWM_3 = 85; // PWM för zon 3. Måste kalibreras!
 bool corrected = false;
 
 
@@ -569,15 +569,15 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         // kör tillbaka till mitten av korridoren
         translate_BWD(100);
         delay(200);
-        translate_stop();
+        quickbrake(100);
         delay(500);
         translate_right(200); 
         delay(450);
         translate_BWD(100);
-        delay(300);
-        translate_stop();
-
-        plockservo.write(130); // fäll ner plockarmen
+        delay(450);
+        quickbrake(100);
+        delay(400);
+        plockservo.write(120); // fäll ner plockarmen
 
         Outmes_inst[2]='u';  // Plockning utförd
         Outmes_inst[1]='1';  // Klar
@@ -609,15 +609,15 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         // kör tillbaka till mitten av korridoren
         translate_BWD(100);
         delay(200);
-        translate_stop();
+        quickbrake(100);
         delay(500);
         translate_left(200); 
         delay(450);
         translate_BWD(100);
-        delay(300);
-        translate_stop();
-        
-        plockservo.write(130); // fäll ner plockarmen
+        delay(450);
+        quickbrake(100);
+        delay(400);
+        plockservo.write(120); // fäll ner plockarmen
         
         //pickLeftCube(); // Hitta kub till vänster
         
@@ -638,7 +638,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
     // kör tillbaka till mitten av korridoren
     translate_BWD(100);
     delay(500);
-    translate_stop();
+    quickbrake(100);
     plockservo.write(130);
     
     Outmes_inst[2]='u';  // Plockning utförd

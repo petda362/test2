@@ -102,7 +102,7 @@
 #define NOTE_D8  4699
 #define NOTE_DS8 4978
 
-#define melodyPin 30
+#define melodyPin 29
 //Bitch lasagna + crab song main theme melody
 int Melody_Lasagna[] = {
 

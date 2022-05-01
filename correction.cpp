@@ -155,6 +155,15 @@ void total_correction(int tolerance_angle, int tolerance, int PWM, float angle) 
 
 void pickLeftCube()
 {
+  /*while(true)
+  {
+    Serial.print("LEFT: ");
+    Serial.print(digitalRead(SENSOR_L));
+    Serial.print("\t");
+    Serial.print("RIGHT: ");
+    Serial.println(digitalRead(SENSOR_R));
+    delay(1);
+  }*/
     int lastMeasurementIR = 0;
     int leftSensorHit = 0;
     // bool testLeft = false;
@@ -162,18 +171,18 @@ void pickLeftCube()
     // int rightSensorHit = 0;
     translate_BWD(100);
     delay(160);
-    translate_stop();
+    quickbrake(100);
     delay(300);
-    translate_left(170);
+    translate_left(225);
     while(true)
     {
       lastMeasurementIR = leftSensorHit;
       for(int i = 0; i<5; i++)
       {
         leftSensorHit += digitalRead(SENSOR_L);
-        delay(30);
+        delay(3);
       }
-      if(leftSensorHit > 2)
+      if(leftSensorHit < 3)
       {
         leftSensorHit = 1;
       }
@@ -183,8 +192,9 @@ void pickLeftCube()
       }
       if(leftSensorHit - lastMeasurementIR == -1)
       {
-        translate_right(170);
-        delay(100);
+        delay(90);
+        translate_right(225);
+        delay(125);
         translate_stop();
         break;
       }
@@ -226,18 +236,18 @@ void pickRightCube()
     // int rightSensorHit = 0;
     translate_BWD(100);
     delay(160);
-    translate_stop();
+    quickbrake(100);
     delay(300);
-    translate_right(170);
+    translate_right(225);
     while(true)
     {
       lastMeasurementIR = rightSensorHit;
       for(int i = 0; i<5; i++)
       {
         rightSensorHit += digitalRead(SENSOR_R);
-        delay(30);
+        delay(3);
       }
-      if(rightSensorHit > 3)
+      if(rightSensorHit < 3)
       {
         rightSensorHit = 1;
       }
@@ -247,8 +257,9 @@ void pickRightCube()
       }
       if(rightSensorHit - lastMeasurementIR == -1)
       {
-        translate_left(170);
-        delay(100);
+        delay(90);
+        translate_left(225);
+        delay(125);
         translate_stop();
         break;
       }
