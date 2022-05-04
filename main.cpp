@@ -28,7 +28,7 @@
 #define trigpin_BR 48
 
 #define STATE 53      // STATE PIN HC05
-#define buzzer_pin 29 // pin for audio buzzer
+#define buzzer_pin 32 // pin for audio buzzer
 
 // Motordrivare
 #define FWDpin_FL 8 // FWD Forward left
@@ -75,7 +75,7 @@ int start_pwm = 200;                      // Base PWM before modifiers. from 0 t
 int correction_pwm = 60;
 int startup_sound = 4;              // if 1 = sing if 0 dont sing
 bool plock = false;
-int PWM_3 = 85; // PWM för zon 3. Måste kalibreras!
+int PWM_3 = 60; // PWM för zon 3. Måste kalibreras!
 bool corrected = false;
 
 
@@ -347,7 +347,6 @@ void center_on_tape() // Centrerar AGV på en tejp med IR-sensorramperna
 
 void correct_FWD(int PWM_C) // corrigera AGV medans den kör
 {
-    
     if(abs(real_distance_FL-real_distance_FR) > 10 || abs(real_distance_BL-real_distance_BR) > 10 ){
                 translate_stop();
                 translate_BWD(PWM_C);
@@ -471,7 +470,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
     // Andra zoner än zon 3
     translate_FWD(PWM);
     if (last_Zone == 2){
-        delay(500); 
+        delay(700); 
     }
     delay(800);
 
@@ -509,10 +508,10 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         translational_correction(real_distance_FL,real_distance_BL, real_distance_FR, real_distance_BR,tolerance,PWM/3);
         }*/
        
-        if(real_distance_FL > (last_real_distance_FL + 50)){
+        if(real_distance_FL > (last_real_distance_FL + 40)){
             L_lost = true;
         }
-        if(real_distance_FR > (last_real_distance_FR + 50)){
+        if(real_distance_FR > (last_real_distance_FR + 40)){
             R_lost = true;
         }
 
@@ -548,7 +547,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 
     case 'l':   // Plocka kub till Vänster 
         
-        //to_hylla(); // kör fram till hyllkanten
+        to_hylla(); // kör fram till hyllkanten
 
         pickLeftCube(); // Hitta kub till vänster
         
@@ -572,7 +571,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         quickbrake(100);
         delay(500);
         translate_right(200); 
-        delay(450);
+        delay(350);
         translate_BWD(100);
         delay(450);
         quickbrake(100);
@@ -586,7 +585,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 
     case 'r':   // Plocka kub till Höger     
         
-        //to_hylla(); // kör fram till hyllkanten
+        to_hylla(); // kör fram till hyllkanten
         
         pickRightCube();    // Hitta kub till höger
 
@@ -612,7 +611,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         quickbrake(100);
         delay(500);
         translate_left(200); 
-        delay(450);
+        delay(350);
         translate_BWD(100);
         delay(450);
         quickbrake(100);
@@ -648,7 +647,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 
     case 'h': // roterar 90 grader medurs
         rotate_centered_clkw(PWM);
-        delay(645);
+        delay(620);
         rotate_stop();
         Outmes_inst[1]='1';
         last_inst = 'h';       
@@ -671,7 +670,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 
     case 'v': // roterar 90 grader moturs
         rotate_centered_cclkw(PWM);
-        delay(645);
+        delay(620);
         rotate_stop();
         Outmes_inst[1]='1';  
         last_inst = 'v';     
@@ -870,24 +869,17 @@ if(BTSerial.available())    // Till AGV
     //BTSerial.println(BTBYTE);
     //Serial.print(BTBYTE);           // Skriver ut BTBYTE i Serial (Serialen på arduino:n).
     //Serial.println(BTBYTE);
-    INBYTE=readBluetoothData(Command, start_pwm, plock); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
+    INBYTE = readBluetoothData(Command, start_pwm, plock); // Behandla meddelandet. Returnera meddelande som ska tillbaka till ÖS.
     plock = true;
     //Serial.println("DÄR!!!");
     BTSerial.println(INBYTE);     // Send string message to serial.
+    Serial.println("det AGV skickar till ÖS");
+    Serial.println(INBYTE);
+    
     }
     else{
         //BTSerial.println("Error reading input");
     }
-}
-if (Command == "ssss"){
-  Serial.println("I stop funktion");
-  delay(4000);
-}
-else{
-  Serial.println(BTBYTE.length());
-  Serial.println(BTBYTE);
- // Serial.println("HÄR!!!");
-  delay(1000); //1 sek = 1'000ms.
 }
 /*
 if(Serial.available())              // Från AGV

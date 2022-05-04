@@ -80,17 +80,17 @@ void diagonal_FW_left(int PWM)
 void translate_left(int PWM)
 {
 
-  analogWrite(FWDpin_FL, (0 * multiplier_FL));
-  analogWrite(BWDpin_FL, (PWM * multiplier_FL));
+  analogWrite(FWDpin_FL, (0));
+  analogWrite(BWDpin_FL, (PWM*1.2));
 
-  analogWrite(FWDpin_FR, (PWM * multiplier_FR));
-  analogWrite(BWDpin_FR, (0 * multiplier_FR));
+  analogWrite(FWDpin_FR, (PWM));
+  analogWrite(BWDpin_FR, (0));
 
-  analogWrite(FWDpin_BL, (PWM * multiplier_BL));
-  analogWrite(BWDpin_BL, (0 * multiplier_BL));
+  analogWrite(FWDpin_BL, (PWM));
+  analogWrite(BWDpin_BL, (0));
 
-  analogWrite(FWDpin_BR, (0 * multiplier_BR));
-  analogWrite(BWDpin_BR, (PWM * multiplier_BR));
+  analogWrite(FWDpin_BR, (0));
+  analogWrite(BWDpin_BR, (PWM*1.2));
 
   current_dir = 3;                                      // Set current direction as translate right
 
@@ -99,17 +99,17 @@ void translate_left(int PWM)
 void translate_right(int PWM)
 {
 
-  analogWrite(FWDpin_FL, (PWM * multiplier_FL));
-  analogWrite(BWDpin_FL, (0 * multiplier_FL));
+  analogWrite(FWDpin_FL, (PWM*1.10));
+  analogWrite(BWDpin_FL, (0));
 
-  analogWrite(FWDpin_FR, (0 * multiplier_FR));
-  analogWrite(BWDpin_FR, (PWM * multiplier_FR));
+  analogWrite(FWDpin_FR, (0));
+  analogWrite(BWDpin_FR, (PWM));
 
-  analogWrite(FWDpin_BL, (0 * multiplier_BL));
-  analogWrite(BWDpin_BL, (PWM * multiplier_BL));
+  analogWrite(FWDpin_BL, (0));
+  analogWrite(BWDpin_BL, (PWM));
 
-  analogWrite(FWDpin_BR, (PWM * multiplier_BR));
-  analogWrite(BWDpin_BR, (0 * multiplier_BR));
+  analogWrite(FWDpin_BR, (PWM*1.10));
+  analogWrite(BWDpin_BR, (0));
 
   current_dir = 4;                                      // Set current direction as translate left
 }
