@@ -66,6 +66,10 @@
 #define servo_pin 38 // servo1 38, servo2 40, servo3 42
 Servo plockservo;
 
+#define servo_pin2 40 // servo1 38, servo2 40, servo3 42
+Servo storage_servo;
+
+
 
 //--------Changeable variables-----------
 int tolerance = 2;                 // Allowed error before the translation correction algorithm is implemented
@@ -197,6 +201,22 @@ void setup()
 }
 
 // ----------Functions------------------------------------
+void raise_storage() {
+    storage_servo.write(180);
+    for(int pos=180; pos >= 0 ; pos-=10){
+        storage_servo.write(pos);
+        delay(15);
+    }
+}
+
+void lower_storage() {
+      storage_servo.write(0);
+    for(int pos=0; pos <= 120; pos+=10){
+        storage_servo.write(pos);
+        delay(15);
+  }
+}
+
 
 void readUSdist() //läser av realdistance för alla ultraljud sensorer
 {
@@ -706,13 +726,21 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         break;
     
     case 'w':
-    rotate_centered_clkw(300);
-    sing(2);
-    translate_stop();
-    Outmes_inst[1] = '1';
-    last_inst = 'w';
-    break;
-        
+      rotate_centered_clkw(300);
+      sing(2);
+      translate_stop();
+      Outmes_inst[1] = '1';
+      last_inst = 'w';
+      break;
+
+    case 'a':
+      raise_storage();
+      delay(500);
+      lower_storage();
+      Outmes_inst[1] = '1'; //Klar
+      last_inst = 'a';
+      break;
+
     default:
         // Ogiltig instruktions karaktär.
         Outmes_inst[2] = 'f';
@@ -725,6 +753,8 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 String readBluetoothData(String BTBYTE, int PWM, bool plock)    // PWM för zon 1 och 2
 {
     plockservo.attach(servo_pin);
+    storage_servo.attach(servo_pin2);
+    
 
     
 

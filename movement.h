@@ -3,7 +3,9 @@
 #include <Arduino.h>
 #include <math.h>
 
+void raise_storage();
 
+void lower_storage();
 
 void diagonal_FW_right(int PWM);                         // Vehicle translates diagonally forward to the right
 

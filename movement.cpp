@@ -9,6 +9,7 @@
 
 //-------------Libraries---------------
 #include "movement.h"
+#include "Servo.h"
 
 
 //---------Defining pins----------------
@@ -46,6 +47,7 @@ int current_dir;
 
 
 // ------------------------------- function ---------------------------
+
 
 void diagonal_FW_right(int PWM)
 {
