@@ -34,8 +34,8 @@
 #define FWDpin_BR 5 // FWD Backward Right
 #define BWDpin_BR 4 // BWD
 
-#define SENSOR_L 44 // IR-Sensor vänster för att hitta block 
-#define SENSOR_R 26 // IR-Sensor höger för att hitta block
+#define SENSOR_L 26 // IR-Sensor vänster för att hitta block 
+#define SENSOR_R 44 // IR-Sensor höger för att hitta block
 
 
 
@@ -169,11 +169,12 @@ void pickLeftCube()
     // bool testLeft = false;
     // bool testRight = false;
     // int rightSensorHit = 0;
+    delay(300);
     translate_BWD(100);
     delay(160);
     quickbrake(100);
     delay(300);
-    translate_left(225);
+    translate_left(200);
     while(true)
     {
       lastMeasurementIR = leftSensorHit;
@@ -192,9 +193,9 @@ void pickLeftCube()
       }
       if(leftSensorHit - lastMeasurementIR == -1)
       {
-        delay(90);
-        translate_right(225);
-        delay(125);
+        delay(100);
+        translate_right(200);
+        delay(100);
         translate_stop();
         break;
       }
@@ -234,11 +235,12 @@ void pickRightCube()
     // bool testLeft = false;
     // bool testRight = false;
     // int rightSensorHit = 0;
+    delay(300);
     translate_BWD(100);
-    delay(160);
+    delay(200);
     quickbrake(100);
     delay(300);
-    translate_right(225);
+    translate_right(200);
     while(true)
     {
       lastMeasurementIR = rightSensorHit;
@@ -257,9 +259,9 @@ void pickRightCube()
       }
       if(rightSensorHit - lastMeasurementIR == -1)
       {
-        delay(90);
-        translate_left(225);
-        delay(125);
+        delay(100);
+        translate_left(200);
+        delay(100);
         translate_stop();
         break;
       }
