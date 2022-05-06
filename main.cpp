@@ -246,8 +246,7 @@ void readIRData() // läser alla IR sensorer
    sensorValue15 = analogRead(SENSORA_B7);
    sensorValue16 =  analogRead(SENSORA_B8);
 
-}
-        /*
+     /*
         Serial.print(sensorValue1);
         Serial.print("\t");
         Serial.print(sensorValue2);
@@ -280,10 +279,13 @@ void readIRData() // läser alla IR sensorer
         Serial.print("\t");
         Serial.println(sensorValue16);
         delay(50);*/
+}
+       
 void center_on_tape() // Centrerar AGV på en tejp med IR-sensorramperna
 { 
   int errorFront;
   int errorBack;
+
     //int center_tape_PWM = 77;
 
     // center Rear IR sensor-ramp on tape
@@ -294,13 +296,13 @@ void center_on_tape() // Centrerar AGV på en tejp med IR-sensorramperna
         int frontRightUS = sensorValue5 + sensorValue6 + sensorValue7 + sensorValue8;
         errorFront = frontLeftUS - frontRightUS;
 
-        if(errorFront > 50)
+        if(errorFront > 45)
         {
-          rotate_cclkw_front(100);
+          rotate_cclkw_front(90);
         }
-        else if(errorFront < -50)
+        else if(errorFront < -45)
         {
-          rotate_clkw_front(100);
+          rotate_clkw_front(90);
         }
         else
         {
@@ -344,13 +346,13 @@ void center_on_tape() // Centrerar AGV på en tejp med IR-sensorramperna
         errorBack = backRightUS - backLeftUS;
        
 
-        if(errorBack > 50)
+        if(errorBack > 45)
         {
-          rotate_cclkw_rear(100);
+          rotate_cclkw_rear(90);
         }
-        else if(errorBack < -50)
+        else if(errorBack < -45)
         {
-          rotate_clkw_rear(100);
+          rotate_clkw_rear(90);
         }
         else
         {
@@ -358,7 +360,9 @@ void center_on_tape() // Centrerar AGV på en tejp med IR-sensorramperna
           break;
         }
       }
+
       readIRData();
+
       if(errorFront > -10 && errorFront < 10 && errorBack > -10 && errorBack < 10)
       {
         break;
@@ -437,7 +441,7 @@ Tape = 0;
                 if (Tape == nr){
                     delay(220);
                     quickbrake(PWM);
-                    total_correction(tolerance_angle, tolerance, PWM_3 + 5, angle);
+                    total_correction(tolerance_angle, tolerance, PWM_3+10, angle);
                     outmes[2] = 'p';
                 }
                 else{
@@ -464,7 +468,7 @@ Tape = 0;
         return outmes;
 }
 
-String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
+String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför instruktion beroende på vad ÖS skickat
 {
 
     switch (inst)
@@ -490,7 +494,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
     // Andra zoner än zon 3
     translate_FWD(PWM);
     if (last_inst == 'f'){
-        delay(1400); 
+        delay(1333); 
     }
     //delay(800);
         //ignore = true;
@@ -541,7 +545,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         }
         else if(R_lost && L_lost){
             if (last_Zone == '1'){
-                delay(100);
+                delay(180);
             }
             else{
             delay(400);
@@ -596,8 +600,11 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         translate_right(150); 
         while(true){
             readIRData();
-            if (sensorValue1 + sensorValue8 + sensorValue9 + sensorValue16 > 1200){
-                quickbrake(200);
+            if(sensorValue3+sensorValue4+sensorValue5+sensorValue6 > 1200 && sensorValue11+sensorValue12+sensorValue13+sensorValue14 > 1200){
+            //if (sensorValue1 + sensorValue8 + sensorValue9 + sensorValue16 > 1200){
+                translate_left(150);
+                delay(80);
+                translate_stop();
                 break;
             }
         }
@@ -642,8 +649,10 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         translate_left(150); 
         while(true){
             readIRData();
-            if (sensorValue1 + sensorValue8 + sensorValue9 + sensorValue16 > 1200){
-                quickbrake(200);
+            if (sensorValue3+sensorValue4+sensorValue5+sensorValue6 > 1200 && sensorValue11+sensorValue12+sensorValue13+sensorValue14 > 1200){
+                translate_right(150);
+                delay(80);
+                translate_stop();
                 break;
             }
         }
@@ -683,8 +692,9 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
     break;
 
     case 'h': // roterar 90 grader medurs
+    delay(200);
         rotate_centered_clkw(PWM);
-        delay(630);
+        delay(620);
         rotate_stop();
         Outmes_inst[1]='1';
        // last_inst = 'h';       
@@ -692,7 +702,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
 
     case 't': // rotera 180 grader
         rotate_centered_clkw(PWM);
-        delay(1670);
+        delay(1635);
         rotate_stop();
         center_on_tape();
         Outmes_inst[1]='1';
@@ -706,8 +716,9 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
     break;
 
     case 'v': // roterar 90 grader moturs
+        delay(200);
         rotate_centered_cclkw(PWM);
-        delay(620);
+        delay(600);
         rotate_stop();
         Outmes_inst[1]='1';  
         //last_inst = 'v';     
@@ -732,7 +743,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
         break;
 
     case 'C':
-        total_correction(tolerance_angle, tolerance, PWM_3, angle);
+        total_correction(tolerance_angle, tolerance, PWM_3+10, angle);
         Outmes_inst[1] = '1'; //Klar
         last_inst = 'C';
         break;
@@ -757,10 +768,10 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone)
       delay(1500);
       lower_storage();
       delay(300);
-      plockservo.write(120);
       translate_BWD(100);
-      delay(500);
+      delay(400);
       translate_stop();
+      plockservo.write(120);
       Outmes_inst[1] = '1'; //Klar
       last_inst = 'a';
       break;

@@ -140,10 +140,10 @@ void total_correction(int tolerance_angle, int tolerance, int PWM, float angle) 
     Serial.print(dist_BR);
     */
    if (orth == false){
-    orth = rotational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance_angle, PWM-3);
+    orth = rotational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance_angle, PWM);
    }
    else if (centered == false){ 
-    translational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance, PWM-3);
+    translational_correction(dist_FL, dist_BL, dist_FR, dist_BR, tolerance, PWM);
     if(centered){
     orth = false;
     }
