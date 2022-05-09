@@ -85,13 +85,17 @@ bool rotational_correction (double dist_FL, double dist_BL, double dist_FR, doub
     if ((dist_BL < (dist_FL - tolerance_angle)) ||
            (dist_FR < (dist_BR - tolerance_angle)))
   {
-    rotate_centered_cclkw(PWM+3);
+    rotate_centered_cclkw(150);
+    delay(3);
+    rotate_centered_cclkw(PWM - 26);
     orth = false;
   }
   else if ((dist_FL < (dist_BL - tolerance_angle) ||
             (dist_FR > (dist_BR + tolerance_angle))))
   {
-    rotate_centered_clkw(PWM+3);
+    rotate_centered_clkw(150);
+    delay(3);
+    rotate_centered_clkw(PWM - 26);
     orth = false;
   }
   else if (!orth) {
@@ -114,12 +118,16 @@ void translational_correction (double dist_FL, double dist_BL, double dist_FR, d
   else if (orth && ((dist_FL < (dist_FR - tolerance)) || 
                     (dist_BL < (dist_BR - tolerance))))
   {
-    translate_right(PWM);
+    translate_right(200);
+    delay(1);
+    translate_right(PWM - 10);
   }
   else if (orth && ((dist_FL > (dist_FR + tolerance)) || 
                     (dist_BL > (dist_BR + tolerance))))
   {
-    translate_left(PWM);
+    translate_left(200);
+    delay(1);
+    translate_left(PWM - 10);
   }
 }
 
