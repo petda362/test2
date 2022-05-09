@@ -298,36 +298,40 @@ void center_on_tape() // Centrerar AGV på en tejp med IR-sensorramperna
   int errorBack;
   bool backCentered = false;
   bool frontCentered = false;
+  int timer = 0;
 
     //int center_tape_PWM = 77;
 
     // center Rear IR sensor-ramp on tape
     while(true){
-    while(true){
-        readIRData();
-        int frontLeftUS = sensorValue1 + sensorValue2 + sensorValue3 + sensorValue4;
-        int frontRightUS = sensorValue5 + sensorValue6 + sensorValue7 + sensorValue8;
-        errorFront = frontLeftUS - frontRightUS;
-        frontCentered = false;
+        while(true){
+            readIRData();
+            int frontLeftUS = sensorValue1 + sensorValue2 + sensorValue3 + sensorValue4;
+            int frontRightUS = sensorValue5 + sensorValue6 + sensorValue7 + sensorValue8;
+            errorFront = frontLeftUS - frontRightUS;
+            frontCentered = false;
+            
 
-        if(sensorValue4 > 600 && sensorValue5 > 600)
-        {
-            frontCentered = true;
-        }
+            if(sensorValue4 > 500 && sensorValue5 > 500)
+            {
+                frontCentered = true;
+                rotate_stop();
+                break;
+            }
 
-        if(errorFront > 0 && !frontCentered)
-        {
-          rotate_cclkw_front(90);
-        }
-        else if(errorFront < 0 && !frontCentered)
-        {
-          rotate_clkw_front(90);
-        }
-        else
-        {
-            rotate_stop();
-            break;
-        }
+            if(errorFront > 0 && !frontCentered)
+            {
+            rotate_cclkw_front(90);
+            }
+            else if(errorFront < 0 && !frontCentered)
+            {
+            rotate_clkw_front(90);
+            }
+            else
+            {
+                rotate_stop();
+                break;
+            }
        
 
 
@@ -365,10 +369,17 @@ void center_on_tape() // Centrerar AGV på en tejp med IR-sensorramperna
         errorBack = backRightUS - backLeftUS;
 
         backCentered = false;
+       
 
-        if(sensorValue12 > 600 && sensorValue13 > 600)
+      //  if (timer == 1000){
+        //    break;
+        //}
+
+        if(sensorValue12 > 540 && sensorValue13 > 540)
         {
             backCentered = true;
+            rotate_stop();
+            break;
         }
        
 
@@ -385,10 +396,12 @@ void center_on_tape() // Centrerar AGV på en tejp med IR-sensorramperna
           rotate_stop();
           break;
         }
+        
+       // ++timer;
       }
 
       readIRData();
-      
+      /*
         Serial.print(sensorValue1);
         Serial.print("\t");
         Serial.print(sensorValue2);
@@ -420,14 +433,20 @@ void center_on_tape() // Centrerar AGV på en tejp med IR-sensorramperna
         Serial.print(sensorValue15);
         Serial.print("\t");
         Serial.println(sensorValue16);
+*/
 
-
-      if((errorFront > -180 && errorFront < 180 && errorBack > -180 && errorBack < 180) && sensorValue4 > 600 && sensorValue5 > 600 && sensorValue12 > 600 && sensorValue13 > 600)
+      if((errorFront > -180 && errorFront < 180 && errorBack > -180 && errorBack < 180) && sensorValue4 > 500 && sensorValue5 > 500 && sensorValue12 > 500 && sensorValue13 > 500)
       {
         break;
       }
       frontCentered = false;
       backCentered = false;
+    
+     if(timer == 30){
+         break;
+     }
+     ++timer;
+    
     }
 }
 
@@ -442,7 +461,7 @@ void correct_FWD(int PWM_C) // corrigera AGV medans den kör
                 orthogonal = false;
                 while(!orthogonal){
                     readUSdist();
-                    orthogonal = rotational_correction(real_distance_FL,real_distance_BL,real_distance_FR,real_distance_BR,2,PWM_3 - 25);
+                    orthogonal = rotational_correction(real_distance_FL,real_distance_BL,real_distance_FR,real_distance_BR,1,PWM_3 - 25);
                 }
 
                 while(true){
@@ -497,8 +516,9 @@ Tape = 0;
         while(Tape < nr){
             readIRData();
             
-            if (((sensorValue9+sensorValue10+sensorValue11+sensorValue12+sensorValue13+sensorValue14+sensorValue15+sensorValue16 + 1500) / 8) < ((sensorValue1+sensorValue2+sensorValue3+sensorValue4+sensorValue5+sensorValue6+sensorValue7+sensorValue8) / 8)){
+            if (((sensorValue9+sensorValue10+sensorValue11+sensorValue12+sensorValue13+sensorValue14+sensorValue15+sensorValue16 + 2400) / 8) < ((sensorValue1+sensorValue2+sensorValue3+sensorValue4+sensorValue5+sensorValue6+sensorValue7+sensorValue8) / 8)){
                 Tape = Tape + 1;
+                counter_correct += 300;
                 if (Tape == nr){
                     delay(190);
                     quickbrake(PWM);
@@ -510,10 +530,10 @@ Tape = 0;
                     BTSerial.println(sendback);
                     sendback = "";
                 }
-                delay(100);
+                delay(220);
             }
 
-            if (counter_correct >= 1000){
+            if (counter_correct >= 300){
             correct_FWD(PWM);          
             }     
             //korrektion
@@ -521,7 +541,7 @@ Tape = 0;
                 I_korridor = true;
                 delay(450);
             }*/
-            counter_correct++;
+            ++counter_correct;
 
         }
         translate_stop();
@@ -555,7 +575,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
     // Andra zoner än zon 3
     translate_FWD(PWM);
     if (last_inst == 'f'){
-        delay(1333); 
+        delay(1150); 
     }
     //delay(800);
         //ignore = true;
@@ -725,7 +745,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
         break;
 
     case 'm':   // Plocka kub i Mitten
-    /*plockservo.write(0);
+    plockservo.write(0);
     center_on_tape();
     to_hylla(); // kör fram till hyllkanten
     
@@ -741,16 +761,14 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
     
     Outmes_inst[2]='u';  // Plockning utförd
     Outmes_inst[1]='1';  // Klar
-    last_inst = 'm';*/
-    translate_FWD(200);
-    delay(5000);
+    last_inst = 'm';
     translate_stop();
     break;
 
     case 'h': // roterar 90 grader medurs
     delay(200);
         rotate_centered_clkw(PWM);
-        delay(650);
+        delay(640);
         rotate_stop();
         delay(530);
         Outmes_inst[1]='1';
@@ -775,7 +793,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
     case 'v': // roterar 90 grader moturs
         delay(200);
         rotate_centered_cclkw(PWM);
-        delay(618);
+        delay(640);
         rotate_stop();
         delay(530);
         Outmes_inst[1]='1';  
@@ -837,7 +855,8 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
 
 
       lower_storage();
-      delay(300);
+      delay(200);
+      sing(1);
       translate_BWD(100);
       delay(450);
       translate_stop();
