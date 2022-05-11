@@ -309,6 +309,9 @@ int melody_nokia[] = {
 
 int tempo_nokia[30] = {180,180,180, 180,180, 180,180, 180,180, 180,180, 180,180, 180,180, 180,180, 180,180, 180,180, 180,180, 180, 180, 0 };
 
+int doom_melody[] = {NOTE_E2, 8, NOTE_E2, 8, NOTE_E3, 8, NOTE_E2, 8, NOTE_E2, 8, NOTE_D3, 8, NOTE_E2, 8, NOTE_E2, 8};
+int doom_tempo[17] = {225,225,225,225,225,225,225,225,225,225,225,225,225,225,225,225, 0};
+
 //-----------------functions------------------
 
 //song variables
@@ -358,8 +361,14 @@ void sing(int s) {
     size = sizeof(melody_nokia);// / sizeof(int);
     break;
 
+    case 5: for(unsigned i =0; i < 16; ++i){
+    Melody[i] = doom_melody[i];
+    Tempo[i] = doom_tempo[i];
     }
-    
+    Melody[16] = 0;
+    size = sizeof(doom_melody);
+    break;
+  }
     // iterate over the notes of the melody:
     for (int thisNote = 0; thisNote < size; thisNote++) {
       if (Melody[thisNote] == 1) break;
@@ -373,7 +382,7 @@ void sing(int s) {
           break;
         }
       }
-      else if (s == 4){
+      else if (s == 4 || s == 5){
         noteDuration = ((4000*4)/Tempo[thisNote]);
         if(Tempo[thisNote] == 0){
           break;
@@ -397,8 +406,8 @@ void sing(int s) {
       buzz(melodyPin, 0, noteDuration);
     }
 
-  } 
   
+}
 
 
 void buzz(int targetPin, long frequency, long length) {

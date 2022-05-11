@@ -99,7 +99,7 @@ int distance_BR;
 
 double real_distance_FL;
 double real_distance_FR;
-double real_distance_BL;
+double real_distance_BL = 0;
 double real_distance_BR;
 
 double last_real_distance_FL;
@@ -147,7 +147,7 @@ char last_inst;
 char last_Zone;
 bool orthogonal;
 int counter_correct = 0;
-bool I_korridor;
+bool I_korridor = true;
 
 int Switch_left;
 int Switch_right;
@@ -452,31 +452,38 @@ void center_on_tape() // Centrerar AGV på en tejp med IR-sensorramperna
 
 void correct_FWD(int PWM_C) // corrigera AGV medans den kör
 {
-    if(abs(real_distance_FL-real_distance_FR) > 9 || abs(real_distance_BL-real_distance_BR) > 9 ){
+    if(abs(real_distance_FL-real_distance_FR) > 8 || abs(real_distance_BL-real_distance_BR) > 8 ){
                 translate_stop();
                 translate_BWD(PWM_C);
                 delay(150);
                 translate_stop();
+                delay(150);
                                  
                 orthogonal = false;
                 while(!orthogonal){
                     readUSdist();
-                    orthogonal = rotational_correction(real_distance_FL,real_distance_BL,real_distance_FR,real_distance_BR,1,PWM_3 - 25);
+                    orthogonal = rotational_correction(real_distance_FL,real_distance_BL,real_distance_FR,real_distance_BR,1,PWM_3 - 15);
                 }
 
                 while(true){
                     if(real_distance_FR + real_distance_BR > real_distance_FL + real_distance_BL){
-                    translate_right(PWM_3);
+                    translate_right(PWM_3+18);
                     }
                     else if(real_distance_FR + real_distance_BR < real_distance_FL + real_distance_BL){
-                    translate_left(PWM_3);   
+                    translate_left(PWM_3+18);   
                     }
                     readUSdist();
-                    if (abs((real_distance_FL + real_distance_BL) - (real_distance_FR+real_distance_BR)) < tolerance + 1){
+                    if (abs((real_distance_FL + real_distance_BL) - (real_distance_FR+real_distance_BR)) < tolerance){
                         translate_stop();
                         break;
                     }
                 }
+                orthogonal = false;
+                while(!orthogonal){
+                    readUSdist();
+                    orthogonal = rotational_correction(real_distance_FL,real_distance_BL,real_distance_FR,real_distance_BR,1,PWM_3 - 15);
+                }
+
                 translate_FWD(PWM_C);
     }
 }
@@ -510,19 +517,25 @@ void to_hylla() // Kör fram till hyllkant
 String Tapestop(int nr, int PWM,String outmes) // funktion för att stanna vid tejp nr
 {
 Tape = 0;
+I_korridor = false;
 //String op = "0p";
         translate_FWD(PWM);
         counter_correct = 0;
         while(Tape < nr){
             readIRData();
             
+            if (I_korridor == true){
+                correct_FWD(PWM);          
+            }  
+            
             if (((sensorValue9+sensorValue10+sensorValue11+sensorValue12+sensorValue13+sensorValue14+sensorValue15+sensorValue16 + 2400) / 8) < ((sensorValue1+sensorValue2+sensorValue3+sensorValue4+sensorValue5+sensorValue6+sensorValue7+sensorValue8) / 8)){
                 Tape = Tape + 1;
-                counter_correct += 300;
+                I_korridor = true;
                 if (Tape == nr){
                     delay(190);
                     quickbrake(PWM);
-                    total_correction(tolerance_angle, tolerance, PWM_3-20, angle);
+                    total_correction(tolerance_angle, tolerance, PWM_3+25, angle);
+                    total_correction(tolerance_angle, tolerance, PWM_3+25, angle);
                     outmes[2] = 'p';
                 }
                 else{
@@ -533,18 +546,15 @@ Tape = 0;
                 delay(220);
             }
 
-            if (counter_correct >= 300){
-            correct_FWD(PWM);          
-            }     
+   
             //korrektion
            /* if (real_distance_FL + real_distance_FR + 50 < real_distance_BL + real_distance_BR ){
                 I_korridor = true;
                 delay(450);
             }*/
-            ++counter_correct;
-
         }
         translate_stop();
+
         
         return outmes;
 }
@@ -563,6 +573,8 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
     
     case 'f':
 
+    readUSdist();
+
     if (Zone == '3'){ // om zon 3 och AGV ska fram till hyllkanten och stanna
         center_on_tape();
         to_hylla();
@@ -576,6 +588,12 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
     translate_FWD(PWM);
     if (last_inst == 'f'){
         delay(1150); 
+        I_korridor = false;
+    }
+    else{
+        total_correction(tolerance_angle, tolerance, PWM_3+25, angle);
+        total_correction(tolerance_angle, tolerance, PWM_3+25, angle);
+        translate_FWD(PWM);
     }
     //delay(800);
         //ignore = true;
@@ -588,6 +606,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
         last_real_distance_FR = real_distance_FR;
         last_real_distance_BL = real_distance_BL;
         last_real_distance_BR = real_distance_BR;
+        
         readUSdist();
         
   
@@ -596,6 +615,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
                   sendback = Outmes_inst[0] + op;
                   BTSerial.println(sendback);
                   sendback = "";
+                  I_korridor = true;
 
                 delay(50);
             }
@@ -625,12 +645,12 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
         }
         //ignore = false;
 
-            if(Zone != '1' && L_lost == false && R_lost == false){
+            if(Zone != '1' && L_lost == false && R_lost == false && I_korridor == true){
                 correct_FWD(PWM);            
             }
         }
         translate_stop();
-        delay(560);
+        delay(200);
         //I_korridor = false;
         Outmes_inst[1]='1';  //Klar
         last_inst = 'f';
@@ -723,7 +743,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
             readIRData();
             if (sensorValue3+sensorValue4+sensorValue5+sensorValue6 > 1200 && sensorValue11+sensorValue12+sensorValue13+sensorValue14 > 1200){
                 translate_right(150);
-                delay(80);
+                delay(85);
                 translate_stop();
                 break;
             }
@@ -768,16 +788,16 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
     case 'h': // roterar 90 grader medurs
     delay(200);
         rotate_centered_clkw(PWM);
-        delay(640);
+        delay(644);
         rotate_stop();
-        delay(530);
+        delay(250);
         Outmes_inst[1]='1';
        // last_inst = 'h';       
         break;
 
     case 't': // rotera 180 grader
-        rotate_centered_clkw(PWM);
-        delay(1635);
+        rotate_centered_clkw(start_pwm);
+        delay(1600);
         rotate_stop();
         center_on_tape();
         Outmes_inst[1]='1';
@@ -785,7 +805,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
         break;
     
     case 'L':
-    sing(3);
+    sing(5);
     Outmes_inst[1] = '1';
     last_inst = 'L';
     break;
@@ -793,9 +813,9 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
     case 'v': // roterar 90 grader moturs
         delay(200);
         rotate_centered_cclkw(PWM);
-        delay(640);
+        delay(632);
         rotate_stop();
-        delay(530);
+        delay(250);
         Outmes_inst[1]='1';  
         //last_inst = 'v';     
         break;
@@ -830,7 +850,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
         break;
     
     case 'w':
-      rotate_centered_clkw(300);
+      rotate_centered_clkw(210);
       sing(2);
       translate_stop();
       Outmes_inst[1] = '1';
@@ -863,6 +883,7 @@ String Instructions(char inst, int PWM, String Outmes_inst, char Zone) // Utför
       delay(450);
       plockservo.write(120);
       Outmes_inst[1] = '1'; //Klar
+      Outmes_inst[2] = 'k'; // avlastat till ÖS
       last_inst = 'a';
       break;
 

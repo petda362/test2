@@ -81,6 +81,7 @@ int real_distance(float distance, float angle)
 
 
 bool rotational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance_angle, int PWM) {
+  Serial.println("rotation");
    
     if ((dist_BL < (dist_FL - tolerance_angle)) ||
            (dist_FR < (dist_BR - tolerance_angle)))
@@ -107,6 +108,7 @@ bool rotational_correction (double dist_FL, double dist_BL, double dist_FR, doub
 }
 
 void translational_correction (double dist_FL, double dist_BL, double dist_FR, double dist_BR, int tolerance, int PWM) {
+  Serial.println("translation");
 
     if (orth && ((dist_FL >= (dist_FR - tolerance)) &&
                (dist_FL <= (dist_FR + tolerance))))
@@ -132,6 +134,7 @@ void translational_correction (double dist_FL, double dist_BL, double dist_FR, d
 }
 
 void total_correction(int tolerance_angle, int tolerance, int PWM, float angle) {
+  Serial.println("total");
   double dist_FL;
   double dist_FR;
   double dist_BL;
